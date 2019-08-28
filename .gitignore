@@ -1,0 +1,9 @@
+# misc
+src/*.aux
+src/*.log
+src/*.nav
+src/*.out
+src/*.pdf
+src/*.snm
+src/*.toc
+src/*.synctex.gz

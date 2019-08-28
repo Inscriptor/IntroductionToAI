@@ -1,0 +1,217 @@
+% Title page
+\frame[plain]{\titlepage}
+
+\lecture{Введение}{intro}
+
+\section{Факты, правила и запросы}
+\subsection{Основные пункты}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	\begin{itemize}
+		\item Рассмотреть простые примеры программ на \textbf{Prolog}, определить понятия факта, правила, запроса и базы знаний
+		\item Дать определения основных понятий и синтаксических конструкций, таких как атомы, переменные и термы
+	\end{itemize}
+\end{frame}
+
+\subsection{База знаний}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	Базовые конструкции языка \textbf{Prolog}:
+	\begin{itemize}
+		\item Факты
+		\item Правила
+		\item Запросы
+	\end{itemize}
+	Программа на Prolog представляет собой множество \textbf{фактов} и \textbf{правил}~--- \alert{Базу Знаний}
+	Чтобы использовать информацию, содержащуюся в базе знаний, необходимо ставить \textbf{запросы}.
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	Пример 1
+	
+	
+	\texttt{\begin{itemize}
+				\item[] woman(mia).
+				\item[] woman(jody).
+				\item[] woman(yolanda).
+				\item[] playsGuitar(jody).
+				\item[]<2-> listensToMusic(mia).
+				\item[]<2-> musician(yolanda).
+				\item[]<2-> playsGuitar(mia) :- listensToMusic(mia).
+				\item[]<2-> playsGuitar(yolanda) :- listensToMusic(yolanda).
+				\item[]<2-> listensToMusic(yolanda) :- musician(yolanda).
+			\end{itemize}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	Пример 2
+	
+	
+	\texttt{\begin{itemize}
+		\item[] musician(mia).
+		\item[] listensToMusic(jody).
+		\item[] playsGuitar(mia) :- listensToMusic(mia),musician(mia).
+		\item[] playsGuitar(jody) :- musician(jody); listensToMusic(jody).
+	\end{itemize}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	Пример 3
+	
+	
+	\texttt{\begin{itemize}
+		\item[] woman(mia).
+		\item[] woman(jody).
+		\item[] woman(yolanda).
+		\item[] loves(vincent,mia).
+		\item[] loves(marcellus,mia).
+	\end{itemize}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	Пример 4
+	
+	
+	\texttt{\begin{itemize}
+			\item[] loves(vincent,mia).
+			\item[] loves(marcellus,mia).
+			\item[] jealous(X,Y) :- loves(X,Z),loves(Y,Z).
+	\end{itemize}}
+\end{frame}
+
+\subsection{Синтаксис}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	\textbf{\underline{Атомы}}
+	
+	\begin{enumerate}
+		\item Последовательность строчных или прописных букв, цифр и символов подчерка, начинающаяся со строчной буквы.
+		\item Произвольная последовательность символов, заключённая в одинарные кавычки.
+		\item Последовательность спецсимволов.
+	\end{enumerate}
+
+	\begin{rexample}
+		mia, marcellus, big\_kahuna\_burger, 'Произвольная строка символов', ====>, :-
+	\end{rexample}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	\textbf{\underline{Числа}}
+	
+	\begin{enumerate}
+		\item Действительные числа: 2,718; 103,3087; \(\pi \), \ldots
+		\item Целые числа: -2, -1, 0, 1, 2, \ldots
+	\end{enumerate}
+
+	\textbf{\underline{Переменные}}
+	
+	\textit{Переменной} называется последовательность строчных или прописных букв, цифр и символов подчерка, начинающаяся с \textbf{прописной буквы} или \textbf{символа подчерка}.
+	
+	\begin{rexample}
+		X, Y, Variable, \_X, X1, \_variable\_with\_some\_info\_
+	\end{rexample}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	\textbf{\underline{Термы}}
+	
+	\textit{Терм (составной терм)} состоит из \alert{функтора} и последовательности аргументов в скобках.
+	\begin{enumerate}
+		\item Любой атом является термом.
+		\item Любая переменная является термом.
+		\item Имя функтора~--- это атом.
+		\item Переменная не может быть функтором.
+		\item Аргументы терма должны быть термами.
+	\end{enumerate}
+
+	\begin{rexample}
+		loves(vincent, mia), playsGuitar(jody), jody, musician(mia), eats(cat,Prey)
+	\end{rexample}
+\end{frame}
+
+\subsection{Проверочные вопросы}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	Какие из перечисленных строк являются атомами, какие переменными, а какие не являются ни тем, ни другим?
+	\texttt{\begin{enumerate}
+		\item vINCENT
+		\item Foot
+		\item x1
+		\item Y3
+		\item big\_kahuna\_burger
+		\item 'Криминальное чтиво'
+		\item roast chicken
+		\item \_IndianaJones
+		\item '\_IndianaJones'
+	\end{enumerate}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	Какие из перечисленных ниже строк являются атомами, переменными или составными термами, а какие вообще не являются термами? Для каждого составного терма укажите имя функтора и его арность.
+	\texttt{\begin{enumerate}
+		\item loves(vincent,mia)
+		\item 'loves(vincent,mia)'
+		\item Eats(cat,mouse)
+		\item hasChildren(cat,kittens)
+		\item and(musician(jody),artist(mia))
+		\item and(musician(X),artist(Y))
+		\item \_and(musician(jody),artist(mia))
+		\item (Butch kills Vincent)
+		\item kills(Butch,Vincent)
+		\item kills(Butch,Vincent
+	\end{enumerate}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	Сколько фактов, правил, высказываний и предикатов в следующей базе знаний? Для каждого правила назовите вывод и цели.
+	\texttt{\begin{itemize}
+			\item[] woman(mia).
+			\item[] woman(jody).
+			\item[] man(jules).
+			\item[] person(X) :- man(X); woman(X).
+			\item[] loves(X,Y) :- knows(Y,X).
+			\item[] father(Y,Z) :- man(Y), son(Z,Y).
+			\item[] father(Y,Z) :- man(Y), daughter(Z,Y).
+	\end{itemize}}
+\end{frame}
+
+\subsection{Упражнения}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	Запишите следующую базу знаний на языке Prolog.
+	
+	\begin{itemize}
+		\item Бутч убийца.
+		\item Миа и Марселлас женаты.
+		\item Зед мертв.
+		\item Марселлас убьет любого, кто сделает Мие массаж стопы.
+		\item Миа любит любого, кто хорошо танцует.
+		\item Джулс ест все, что вкусно или питательно.
+	\end{itemize}
+\end{frame}
