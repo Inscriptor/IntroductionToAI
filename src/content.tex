@@ -320,7 +320,7 @@
 	\frametitle{\insertsection}
 	\framesubtitle{\insertsubsection}
 	\begin{figure}
-		\includegraphics[scale=0.25]{stree}
+		\includegraphics[scale=0.35]{stree}
 	\end{figure}
 \end{frame}
 
@@ -388,24 +388,25 @@
 \begin{frame}
 	\frametitle{\insertsection}
 	\framesubtitle{\insertsubsection}
-	Имеется 6 слов: \textit{abalone, abandon, anagram, connect, elegant, enhance}, представленных в базе знаний следующим образом:
-	
-	
+	Имеется следующий список слов: \textit{бок, акр, сомо, бокс, хата, эдда, вино, рода, окот, анод, скала, онагр, обиход, монако, дверка, дигора, удокан, маарри, бинокль, бегония}.
+	Пусть в базе знаний слова представляются следующим образом:
 	\texttt{\begin{itemize}
-			\item[] word(abalone,a,b,a,l,o,n,e).
-			\item[] word(abandon,a,b,a,n,d,o,n).
-			\item[] word(enhance,e,n,h,a,n,c,e).
-			\item[] word(anagram,a,n,a,g,r,a,m).
-			\item[] word(connect,c,o,n,n,e,c,t).
-			\item[] word(elegant,e,l,e,g,a,n,t).
+			\item[] word(эдда,э,д,д,а).
+			\item[] word(вино,в,и,н,о).
+			\item[] word(рода,р,о,д,а).
+			\item[] word(окот,о,к,о,т).
+			\item[] word(анод,а,н,о,д).
+			\item[] word(скала,с,к,а,л,а).
+			\item[] word(онагр,о,н,а,г,р).
+			\item[] word(обиход,о,б,и,х,о,д).
 	\end{itemize}}
 \end{frame}
 
 \begin{frame}
 	\frametitle{\insertsection}
 	\framesubtitle{\insertsubsection}
-	Реализовать предикат \texttt{crosswd/6 = crosswd(V1,V2,V3,H1,H2,H3)}, который бы заполнял данными словами следующий кроссворд таким образом, чтобы
-	слова, идущие вертикально были первыми тремя аргументами, а слова, идущие горизонтально~--- последними тремя.
+	Реализовать предикат \texttt{crosswd/10 = crosswd(V1,V2,V3,V4,V5,V6,H1,H2,H3,H4)}, который бы заполнял данными словами следующий кроссворд таким образом, чтобы
+	слова, идущие вертикально, были первыми 6 аргументами, а слова, идущие горизонтально~--- последними.
 	\begin{figure}
 		\includegraphics[scale=0.9]{crosswd}
 	\end{figure}
