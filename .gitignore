@@ -7,3 +7,5 @@ src/*.pdf
 src/*.snm
 src/*.toc
 src/*.synctex.gz
+# additional materilas
+/add

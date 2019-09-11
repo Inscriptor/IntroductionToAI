@@ -268,7 +268,7 @@
 	\framesubtitle{\insertsubsection}
 	\begin{itemize}
 		\item Познакомиться с понятием согласования термов.
-		\item Разобраться в стратегиях, используемых движком языка Prolog для поиска ответов на вопросы.
+		\item Разобраться в стратегиях, используемых интерпретатором языка Prolog для поиска ответов на вопросы.
 	\end{itemize}
 \end{frame}
 
@@ -281,13 +281,13 @@
 	\only<2->{\begin{enumerate}
 			\item Если \texttt{term1} и \texttt{term2} константы, то \texttt{term1} и \texttt{term2} унифицированы тогда и только тогда, когда они равны друг другу, т.е. \texttt{term1} и \texttt{term2} это один и тот же атом или число.
 			\item Если \texttt{term1}~--- это переменная, а \texttt{term2}~--- любой терм, то термы \texttt{term1} и \texttt{term2} унифицированы, и переменная \texttt{term1} инициализируется значением терма \texttt{term2}. 
-			Если \texttt{term1} и \texttt{term2}~--- переменные, они унифицированы и принимают значения друг друга. Говорят, что переменные \texttt{term1} и \texttt{term2} \alert{делят одно значение}.
+			Если \texttt{term1} и \texttt{term2}~--- переменные, они унифицированы и принимают значения друг друга. Говорят, что переменные \texttt{term1} и \texttt{term2} \alert{разделяют значение}.
 			\item Если \texttt{term1} и \texttt{term2} составные термы, то они унифицированы тогда и только тогда, когда:
 			\begin{enumerate}[(a)]
 				\item Их функторы и арность совпадают.
 				\item Соответствующие аргументы обоих термов унифицированы. При этом означивание переменных согласовано.
 			\end{enumerate}
-			\item Два терма унифицированы тогда и только тогда, когда это следует из одного из трех предыдущих пунктов.
+			\item Два терма унифицированы тогда и только тогда, когда это следует из одного из предыдущих пунктов.
 	\end{enumerate}}
 \end{frame}
 
@@ -299,10 +299,10 @@
 	\textbf{Какие из термов унифицированы?}
 	\texttt{\begin{itemize}
 		\item john = john.
-		\item 2 = 2.
+		\item 42 = 42.
 		\item 'Строка слов' = 'Строка слов'.
 		\item 'mia' = mia.
-		\item '2' = 2.
+		\item '42' = 42.
 		\item mia = X.
 		\item X = Y.
 		\item kill(shoot(gun),Y) = kill(X,stab(knife)).
@@ -349,19 +349,19 @@
 	\framesubtitle{\insertsubsection}
 	В каких из перечисленных пар термы унифицированы? Где необходимо запишите значения переменных, необходимые для унификации.
 	\texttt{\begin{enumerate}
-			\item bread = bread
-			\item 'Bread' = bread
-			\item 'bread' = bread
-			\item Bread = bread
-			\item хлеб = котлета
-			\item food(bread) = bread
-			\item food(bread) = Bread
-			\item food(Bread) = food(bread)
-			\item food(хлеб,X) = food(Y,котлета)
-			\item food(сухарики,X,пиво) = food(Y,чипсы,X)
-			\item food(X) = X
-			\item meal(food(bread),drink(beer)) = meal(food(X),Y)
-			\item meal(food(bread),X) = meal(X,drink(beer))
+			\item bread = bread.
+			\item 'Bread' = bread.
+			\item 'bread' = bread.
+			\item Bread = bread.
+			\item хлеб = котлета.
+			\item food(bread) = bread.
+			\item food(bread) = Bread.
+			\item food(Bread) = food(bread).
+			\item food(хлеб,X) = food(Y,котлета).
+			\item graph(edge(v1,v2),X,edge(Y,v4)) = graph(Z,edge(v7,v8),edge(v4,X)).
+			\item food(X) = X.
+			\item meal(food(bread),drink(beer)) = meal(food(X),Y).
+			\item meal(food(bread),X) = meal(X,drink(beer)).
 	\end{enumerate}}
 \end{frame}
 
@@ -398,9 +398,9 @@
 			\item[] word(noun,'big kahuna burger').
 			\item[] word(verb,eats).
 			\item[] word(verb,likes).
-			\item[] sentence(W1,W2,W3,W4,W5) :- word(article,W1), word(noun,W2), word(verb,W3), word(article,W4), word(noun,W5).
+%			\item[] sentence(W1,W2,W3,W4,W5) :- word(article,W1), word(noun,W2), word(verb,W3), word(article,W4), word(noun,W5).
 	\end{itemize}}
-	Написать такой запрос, чтобы в результате получить список всех возможных фраз данного лексикона. Построить дерево поиска решений для одной из построенных фраз.
+	Написать запрос на получение списка всех возможных фраз данного лексикона, имеющих вид: \textit{артикль+существительное+глагол+артикль+существительное}. Построить дерево поиска решений для одной из построенных фраз.
 \end{frame}
 
 \begin{frame}
