@@ -432,3 +432,213 @@
 
 \lecture{Recursion}{recursion}
 
+\begin{frame}[plain,c]
+
+	\begin{center}
+		\Huge Определения и примеры
+	\end{center}
+
+\end{frame}
+
+\section{Рекурсия в Prolog}
+\subsection{Простой пример}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	\texttt{\begin{itemize}
+			\item[] переваривает(Хищник,Добыча) :- съел(Хищник,Добыча).
+			\item[] переваривает(Хищник,Добыча) :- съел(Хищник,ДругойХищник), переваривает(ДругойХищник,Добыча).
+			\item[] съел(комар,кровь).
+			\item[] съел(лягушка, комар).
+			\item[] съел(цапля, лягушка).
+	\end{itemize}}
+\end{frame}
+
+\section{Уровни понимания программ}
+\subsection{Декларативный и процедурный}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	\alert{Декларативный смысл} Prolog-программы касается только \textit{отношений}, определенных в программе.
+	Другими словами, декларативный смысл определяет, что должно быть результатом работы программы с точки зрения математической логики.
+	
+	\alert{Процедурный смысл} программы определяет еще и как этот результат был получен, т.е. как отношения реально обрабатываются пролог-системой.
+\end{frame}
+
+\section{Правила описания рекурсивных предикатов}
+\subsection{База и шаг рекурсии}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	\only<1>{\textbf{База рекурсии}}
+	\only<2>{\textbf{Шаг рекурсии}}
+	
+	
+	\texttt{\begin{itemize}
+			\item[] {\color<1>[RGB]{0,0,255}{переваривает(Хищник,Добыча) :- съел(Хищник,Добыча).}}
+			\item[] {\color<2>[RGB]{0,0,255}{переваривает(Хищник,Добыча) :- съел(Хищник,ДругойХищник), переваривает(ДругойХищник,Добыча).}}
+			\item[] съел(комар,кровь).
+			\item[] съел(лягушка, комар).
+			\item[] съел(цапля, лягушка).
+	\end{itemize}}
+\end{frame}
+
+\subsection{descending.pl}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	\texttt{\begin{itemize}
+			\item[] child(adam,cain).
+			\item[] child(adam,abel).
+			\item[] child(adam,seth).
+			\item[] child(cain,enoch).
+			\item[] child(enoch,irad).
+			\item[] child(irad,mehujael).
+			\item[] child(seth,enos).
+			\item[] child(enos,kenan).
+			\item[] child(kenan,mahalalel).
+			\item<2->[] descend(A,D) :- child(A,D).
+			\item<2->[] descend(A,D) :- child(A,C), descend(C,D).
+	\end{itemize}}
+\end{frame}
+
+\subsection{arithmetic.pl}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	\texttt{\begin{itemize}
+			\item[] num(0).
+			\item[] num(s(N)) :- num(N).
+			\item<2->[] plus(0,N,N).
+			\item<2->[] plus(s(M),N,s(Sum)) :- plus(M,N,Sum).
+	\end{itemize}}
+\end{frame}
+
+\section{Последовательность целей и остановка программ}
+\subsection{Возможные источники ошибок}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	\texttt{\begin{itemize}
+			\item[] child(adam,cain).
+			\item[] child(adam,abel).
+			\item[] child(adam,seth).
+			\item[] child(cain,enoch).
+			\item[] child(enoch,irad).
+			\item[] child(irad,mehujael).
+			\item[] child(seth,enos).
+			\item[] child(enos,kenan).
+			\item[] child(kenan,mahalalel).
+	\end{itemize}}
+	\texttt{\only<1>{\begin{itemize}
+				\item[] descend(A,D) :- child(A,D).
+				\item[] descend(A,D) :- child(A,C), descend(C,D).
+			\end{itemize}}
+		\only<2>{\begin{itemize}
+				\item[] descend(A,D) :- descend(C,D), child(A,C).
+				\item[] descend(A,D) :- child(A,D).
+		\end{itemize}}
+		\only<3>{\begin{itemize}
+				\item[] descend(A,D) :- child(A,D).
+				\item[] descend(A,D) :- descend(C,D), child(A,C).
+		\end{itemize}}
+		\only<4>{\begin{itemize}
+				\item[] descend(A,D) :- child(A,C), descend(C,D).
+				\item[] descend(A,D) :- child(A,D).
+		\end{itemize}}
+	}
+
+\end{frame}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\texttt{\begin{itemize}
+			\item[] num(0).
+			\item[] num(s(N)) :- num(N).
+		\end{itemize}
+	}
+	
+	\texttt{\begin{itemize}
+			\item[] num(s(N)) :- num(N).
+			\item[] num(0).
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame}[plain,c]
+
+	\begin{center}
+		\Huge Упражнения
+	\end{center}
+
+\end{frame}
+
+
+\section{Упражнения}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\begin{itemize}
+		\item Скачайте или перепишите листинг программы \texttt{descending.pl}. Рассмотрите каждый случай рекурсии (см. слайды ранее). Какие запросы работают, какие нет? Почему?
+		\item Скачайте или перепишите листинг программы \texttt{arithmetic.pl}. Реализуйте следующие операции над числами, определенными в программе:
+		\begin{enumerate}
+			\item \textbf{Умножение}: реализуйте предикат \texttt{times/3}, такой, чтобы последним аргументом было произведение двух первых.
+			\item \textbf{Возведение в степень}: реализуйте предикат \texttt{exp(N,X,R)}, такой, чтобы \(R = X^{N}\).
+			\item \textbf{Сравнение}: реализуйте предикаты \texttt{gt/2, lt/2}, истинные тогда, когда первый аргумент больше (меньше), чем второй.
+			\item \textbf{Равенство}: реализуйте предикат \texttt{eq/2}, истинный тогда и только тогда, когда его аргументы равны.
+			\item \textbf{Максимум и минимум двух чисел}: реализуйте предикаты \texttt{max/3, min/3}, где третий аргумент~--- это максимум (минимум) из двух первых.
+		\end{enumerate}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\begin{itemize}
+		\item Реализуйте программу для вычисления факториала числа (в обычной численной арифметике). Сравните время работы и количество операций в зависимости от значения входных параметров.
+		\item Реализуйте программу для вычисления чисел Фибоначчи. Реализуйте предикат \texttt{getFibN/2 = getFibN(N, Fn)}, такой, что \(F_n\)~--- N-е число Фибоначчи.
+		\item Используя предыдущую программу, реализуйте предикат \texttt{getNearestFibonacci/3}, возвращающий по заданному числу номер ближайшего к нему числа Фибоначчи и его номер.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	Опишите следующий граф в виде базы знаний. Реализуйте предикат \texttt{fromTo/2 = fromTo(Begin,End)}, который по заданным началу и концу маршрута будет выяснять, существует ли путь между
+	заданными вершинами и печатать в консоли слово, которое получается при следовании по найденному пути.
+	
+	\begin{figure}
+		\includegraphics[scale=0.35]{graph}
+	\end{figure}
+\end{frame}
+
+\begin{frame}[shrink=7]
+	\frametitle{\insertsection}
+	Скачайте базу знаний \texttt{travel.pl} или перепишите.
+	\texttt{\begin{itemize}
+			\item[] byCar(auckland,hamilton).
+			\item[] byCar(hamilton,raglan).
+			\item[] byCar(valmont,saarbruecken).
+			\item[] byCar(valmont,metz).
+			\item[] byTrain(metz,frankfurt).
+			\item[] byTrain(saarbruecken,frankfurt).
+			\item[] byTrain(metz,paris).
+			\item[] byTrain(saarbruecken,paris).
+			\item[] byPlane(frankfurt,bangkok).
+			\item[] byPlane(frankfurt,singapore).
+			\item[] byPlane(paris,losAngeles).
+			\item[] byPlane(bangkok,auckland).
+			\item[] byPlane(losAngeles,auckland).
+	\end{itemize}}
+	Реализуйте предикат \texttt{travel/2}, который по заданным началу и концу маршрута определял бы, существует ли способ добраться из начала в конец и
+	печатал пункты маршрута, а также виды транспорта, которыми осуществляется перемещение между промежуточными пунктами.
+\end{frame}
