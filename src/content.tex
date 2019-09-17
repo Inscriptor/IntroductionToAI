@@ -642,3 +642,108 @@
 	Реализуйте предикат \texttt{travel/2}, который по заданным началу и концу маршрута определял бы, существует ли способ добраться из начала в конец и
 	печатал пункты маршрута, а также виды транспорта, которыми осуществляется перемещение между промежуточными пунктами.
 \end{frame}
+
+\lecture{Lists}{lists}
+
+\begin{frame}[plain,c]
+
+	\begin{center}
+		\Huge Понятие и вид списка в Prolog
+	\end{center}
+
+\end{frame}
+
+\section{Списки}
+
+\subsection{Список в Prolog}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Списком называют конечную последовательность элементов.
+		\item В синтаксисе языка Prolog границы списка определяются квадратными скобками [ и ].
+		\item Элементы списка отделяются друг от друга запятой. Элементами списка могут быть любые термы.
+		\item Любой непустой список можно разделить на голову и хвост (head и tail). Для записи используется специальный символ |. 
+		\texttt{[Head | Tail] = [one, two, three]} => \texttt{Head = one, Tail = [two, three]}. Голова списка~--- это элемент,
+		хвост списка~--- это список.
+		\item Пустой список не может быть разделен на голову и хвост.
+	\end{itemize}
+
+\end{frame}
+
+\subsection{Простой пример}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\texttt{\begin{itemize}
+			\item[] []
+			\item[] [first, second, third, fourth, fifth]
+			\item[] [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+			\item[] [first, 2, color(cornie, black), F, fifth, F]
+			\item[] [first, second, [third, fourth], [fifth, color(cornie, black)]]
+			\item[] [[], [], car(volkswagen), F, 1, 2, [1, F, car(bmw), [1, 2, 4]], X]
+	\end{itemize}}
+
+\end{frame}
+
+\subsection{Получение элементов списка}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\texttt{\begin{itemize}
+			\item[] [abyssian, bobtail, [bengal, birman]]
+	\end{itemize}}
+
+	\texttt{\begin{itemize}
+			\item<2-> {[H|T]} = [abyssian, bobtail, [bengal, birman]].
+			\item<3-> {[F,S|T]} = [abyssian, bobtail, [bengal, birman]].
+			\item<4-> {[\_,S|T]} = [abyssian, bobtail, [bengal, birman]].
+			\item<5-> {[First,\_,\_,Fourth|\_]} = [abyssian, bobtail, [bengal, birman]].
+			\item<6-> {[\_,\_,[\_|T]|\_]} = [abyssian, bobtail, [bengal, birman]].
+	\end{itemize}}
+
+\end{frame}
+
+\section{Операции со списками}
+\subsection{Проверка вхождения элемента}
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Предикат \alert{\texttt{member/2 = member(?Elem, ?List)}} имеет два аргумента~--- некоторый терм и список, и принимает значение \texttt{true} в
+	случае, когда \texttt{?Elem} содержится в списке \texttt{?List}. В противном случае предикат принимает значение \texttt{false}.
+	\newline \newline
+	\uncover<2->{Как можно реализовать предикат \texttt{member/2} самостоятельно?}
+	
+	\texttt{\begin{itemize}
+			\item<3->[] member(X, [X|T]).
+			\item<4->[] member(X, [H|T]) :- member(X,T).
+	\end{itemize}}
+
+	\uncover<5->{\texttt{\begin{itemize}
+				\item[] member(X, [X|\_]).
+				\item[] member(X, [\_|T]) :- member(X,T).
+	\end{itemize}}}
+	
+\end{frame}
+
+\subsection{Разбор интересного примера}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Какой-нибудь интересный пример на рекурсивный разбор списка или что-то в этом роде.
+
+\end{frame}
