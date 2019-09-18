@@ -519,6 +519,26 @@
 	\end{itemize}}
 \end{frame}
 
+\section{Рекурсия и хвостовая рекурсия}
+\subsection{Численная арифметика: вычисление факториала числа}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\texttt{\begin{itemize}
+			\item[] f(0,1).
+			\item[] f(X,Y) :- X>0,X1 is X-1,f(X1,Y1),Y is Y1*X.
+	\end{itemize}}
+
+	\uncover<2->{\texttt{\begin{itemize}
+				\item[] f(N,N,F):-write(F),!.
+				\item[] f(N,N1,F1):- N2 is N1+1,F2 is F1*N2,f(N,N2,F2).
+				\item[] factorial(N):- f(N,1,1).
+	\end{itemize}}}
+
+\end{frame}
+
 \section{Последовательность целей и остановка программ}
 \subsection{Возможные источники ошибок}
 
