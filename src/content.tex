@@ -631,6 +631,25 @@
 	\end{itemize}
 \end{frame}
 
+
+
+\lecture{Additional Excercises}{recursionExt}
+
+\section{Дополнительные упражнения}
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	
+	Преобразуйте программу \texttt{arithmetic.pl}.
+	
+	\begin{itemize}
+		\item Реализуйте операцию деления \(N\) на \(M\) с остатком таким образом, чтобы результатом были два числа \(Q\) и \(P\), такие, что \(N = M\cdot Q + P \).
+		\item Реализуйте алгоритм Евклида для поиска наибольшего общего делителя двух заданных чисел.
+	\end{itemize}
+	
+\end{frame}
+
 \begin{frame}
 	\frametitle{\insertsection}
 	Опишите следующий граф в виде базы знаний. Реализуйте предикат \texttt{fromTo/2 = fromTo(Begin,End)}, который по заданным началу и концу маршрута будет выяснять, существует ли путь между
@@ -645,22 +664,37 @@
 	\frametitle{\insertsection}
 	Скачайте базу знаний \texttt{travel.pl} или перепишите.
 	\texttt{\begin{itemize}
-			\item[] byCar(auckland,hamilton).
-			\item[] byCar(hamilton,raglan).
-			\item[] byCar(valmont,saarbruecken).
-			\item[] byCar(valmont,metz).
-			\item[] byTrain(metz,frankfurt).
-			\item[] byTrain(saarbruecken,frankfurt).
-			\item[] byTrain(metz,paris).
-			\item[] byTrain(saarbruecken,paris).
-			\item[] byPlane(frankfurt,bangkok).
-			\item[] byPlane(frankfurt,singapore).
-			\item[] byPlane(paris,losAngeles).
-			\item[] byPlane(bangkok,auckland).
-			\item[] byPlane(losAngeles,auckland).
+		\item[] byCar(auckland,hamilton).
+		\item[] byCar(hamilton,raglan).
+		\item[] byCar(valmont,saarbruecken).
+		\item[] byCar(valmont,metz).
+		\item[] byTrain(metz,frankfurt).
+		\item[] byTrain(saarbruecken,frankfurt).
+		\item[] byTrain(metz,paris).
+		\item[] byTrain(saarbruecken,paris).
+		\item[] byPlane(frankfurt,bangkok).
+		\item[] byPlane(frankfurt,singapore).
+		\item[] byPlane(paris,losAngeles).
+		\item[] byPlane(bangkok,auckland).
+		\item[] byPlane(losAngeles,auckland).
 	\end{itemize}}
 	Реализуйте предикат \texttt{travel/2}, который по заданным началу и концу маршрута определял бы, существует ли способ добраться из начала в конец и
 	печатал пункты маршрута, а также виды транспорта, которыми осуществляется перемещение между промежуточными пунктами.
+\end{frame}
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	
+	Реализуйте некоторый каталог вида \texttt{unit(key, value)}. Например, список книг по авторам:
+	\texttt{\begin{itemize}
+			\item[] book(heinlein, 'Stranger in a Strange Land').
+			\item[] book(heinlein, 'The Moon Is a Harsh Mistress').
+			\item[] book(niven, 'Lucifer's Hammer').
+	\end{itemize}}
+	
+	Реализуйте программу, запрашивающую из консоли ввод автора и печатающая либо список его книг, либо сообщение, что книг данного автора в каталоге нет.
+	
 \end{frame}
 
 \lecture{Lists}{lists}
