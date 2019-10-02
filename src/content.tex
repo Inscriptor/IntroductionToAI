@@ -822,3 +822,35 @@
 	\end{itemize}
 
 \end{frame}
+
+
+\begin{frame}[plain,c]
+	
+	\begin{center}
+		\Huge Домашнее задание
+	\end{center}
+
+\end{frame}
+
+\section{Домашнее задание}
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	
+	\begin{enumerate}
+		\item В программе \texttt{lists.pl} реализовать предикат \texttt{revAcc}, обращающий список более эффективно, чем
+		предикат \texttt{rev}. Использовать дополнительный список для аккумуляции результата.
+		\item В программу \texttt{lists.pl} добавить реализацию предиката \texttt{listGen}, генерирующего по заданному числу N
+		список длины N, заполненный случайными целыми числами (см. предикаты \texttt{randon} и \texttt{random\_between}).
+		\item Реализовать в программе \texttt{lists.pl} алгоритм быстрой сортировки quicksort двумя способами и сравните их
+		производительность на списках большой длины. Для разделения списка можно использовать встроенный предикат \texttt{partition/4}.
+		\begin{enumerate}
+			\item Реализовать предикат \texttt{qsortLast}, который в качестве опорного берет последний элемент списка.
+			\item Реализовать предикат \texttt{qsortMiddle}, где в качестве опорного берется центральный элемент списка.
+		\end{enumerate}
+		\item Изменить программу \texttt{monkey.pl} так, чтобы избежать генерации бесконечного множества
+		абстрактных решений.
+	\end{enumerate}
+	
+\end{frame}
