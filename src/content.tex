@@ -711,6 +711,10 @@
 	
 \end{frame}
 
+
+% Списки в Prolog
+
+
 \lecture{Lists}{lists}
 
 \begin{frame}[plain,c]
@@ -851,6 +855,333 @@
 		\end{enumerate}
 		\item Изменить программу \texttt{monkey.pl} так, чтобы избежать генерации бесконечного множества
 		абстрактных решений.
+	\end{enumerate}
+	
+\end{frame}
+
+
+% Арифметика и численные операции
+
+
+\lecture{Arithmetic}{arithmetic}
+
+
+\begin{frame}
+	
+	\begin{center}
+		\Huge Арифметика в Prolog
+	\end{center}
+	
+\end{frame}
+
+
+\section{Реализация арифметики в Prolog}
+\subsection{Численные типы и операции}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	В языке Prolog реализованы численные типы данных и операции над ними.
+	Для проверки типов в программе применяются соответствующие встроенные предикаты.
+	
+	Численные типы данных:
+	
+	\begin{itemize}
+		\item \textbf{Integer} --- целые числа: \(1, 2, 3, 4, -100, 1001 \). Предикат \texttt{integer/1} возвращает \texttt{True} в случае, если переданный терм представляет целое число.
+		\item \textbf{Float} --- вещественные числа: \(1.2, 3.14, 2.7 \). Предикат \texttt{float/1} возвращает \texttt{True}, если терм представляет вещественное число.
+		\item \textbf{Rational} --- рациональные числа: \(\frac{1}{3}, \frac{2}{7} \). Для проверки используется предикат \texttt{rational/1}. Данный предикат считает рациональными и все целые числа.
+	\end{itemize}
+
+	Рациональные числа записываются с помощью специального предиката \texttt{rdiv}, который работает как дробная черта.
+	
+	\begin{rexample}
+		\(\frac{1}{3}  = \) \texttt{1 rdiv 3}.
+		\texttt{X is (1 rdiv 3) * 3 \( \Rightarrow \) X = 1.}
+	\end{rexample}
+
+\end{frame}
+
+
+\begin{frame}
+		
+		\frametitle{\insertsection}
+		\framesubtitle{\insertsubsection}
+		
+		\begin{table}
+			\centering
+			\begin{tabular}{ l | r }
+				\rowcolor{Gray}
+				\textbf{Арифметическое выражение} & \textbf{Запись в синтаксисе Prolog} \\
+				\hline
+				\rowcolor{LightGray}\( 10 + 5 = 15 \) & \texttt{15 is 10 + 5.}   \\
+				\rowcolor{LightGray}\( 10\cdot 5 = 50 \)  & \texttt{50 is 10 * 5.}   \\
+				\rowcolor{LightGray}\( 10 - 5 = 5 \)  & \texttt{5 is 10 - 5.}   \\
+				\rowcolor{LightGray}\( 5 - 10 = -5 \)  & \texttt{-5 is 5 - 10.}   \\
+				\rowcolor{LightGray}\( 10\div 5 = 2 \)  & \texttt{2 is 10 / 5.}   \\
+				\rowcolor{LightGray}\( 10\div 4 = 2.5 \)  & \texttt{2.5 is 10 / 4.}   \\
+				\rowcolor{LightGray}\( 10\div 4 = 4\cdot 2 + 2 \)  & \texttt{2 is mod(10,4).}  \\
+			\end{tabular}
+		\end{table}
+		
+\end{frame}
+
+
+\subsection{Встроенные арифметические функции}
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	
+	Встроенные функции реализуют основные численные операции. Данных функций в большинстве случаев хватает для реализации логических программ.
+	
+	\begin{rexample}
+		\texttt{sin, cos, tan, log, log10, exp, **, sqrt, ceil, floor, round, abs, max, min, >>, <<}
+	\end{rexample}
+	
+\end{frame}
+
+
+\section{Использование арифметических операций в Prolog-программах}
+\subsection{Унификация и вычисление}
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Арифметические вычисления реализованы в Prolog как некоторое полезное дополнение к базовому функционалу.
+		\item Базовый функционал Пролога заключается в унификации термов.
+		\item Отдельно выражения вида \texttt{10 + 5} рассматриваются интерпретатором как термы с функтором \texttt{+} и двумя аргументами \texttt{10} и \texttt{5}.
+		\item Запись \texttt{10 + 5} --- это более удобная нотация для выражения терма \texttt{+(10,5)}.
+		\item Чтобы сообщить интерпретатору о необходимости \alert{вычислить (evaluate)} выражение \( 10 + 5 \), вместо унификации терма \texttt{+(10,5)}, необходимо использовать
+		специальный предикат \texttt{is/2}.
+	\end{itemize}
+	
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}	
+	
+	Предикат \texttt{is} принимает два аргумента: число или переменную и арифметическое выражение, которое требуется вычислить.
+	Запись \texttt{(Num is Expr)} является более удобной нотацией для терма \texttt{is(Num, Expr)}.
+	
+	\begin{rexample}
+		\texttt{15 is 10 + 5.} \(\Leftrightarrow \) \texttt{is(15,+(10,5)).} \\
+		\texttt{X is (2*5 + 10) / 4.} \(\Leftrightarrow \) \texttt{is(X,/(+(*(2,5),10),4)).}
+	\end{rexample}
+
+\end{frame}
+
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Так как арифметические вычисления не являются естественной частью Пролога, их использование имеет свои ограничения.
+	
+	\begin{itemize}
+		\item Вычисляемое арифметическое выражение должно быть справа. Допустима запись \texttt{X is 10 + 5}, но недопустимо обратное \texttt{10 + 5 is X}.
+		В целом, любая переменная в правой части на момент вычисления должна иметь численное значение. В противном случае будет выведено сообщение об ошибке.
+		\item Правая и левая части должны иметь численные типы (левая часть также может быть переменной). Арифметика работает не так как унификация,
+		соответственно, передача для вычисления типов данных, отличных от численных, также приведет к ошибке.
+	\end{itemize}
+	
+	
+\end{frame}
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Для примера рассмотрим функцию инкремента.
+	
+	\texttt{\begin{itemize}
+		\item[] inc(X,Y) :- Y is X + 1.
+	\end{itemize}}
+	
+	\begin{itemize}
+		\item Запрос \texttt{inc(10,11)} вернет ответ \texttt{True}.
+		\item Запрос \texttt{inc(10,I)} вернет ответ \texttt{I = 11}.
+		\item Однако запрос \texttt{inc(X,11)} вызовет ошибку.
+	\end{itemize}
+
+	
+\end{frame}
+
+
+\subsection{Операции сравнения}
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	
+	\begin{table}
+		\centering
+		\begin{tabular}{ l | r }
+			\rowcolor{Gray}
+			\textbf{Арифметическое выражение}   & \textbf{Запись в синтаксисе Prolog} \\
+			\hline
+			\rowcolor{LightGray}\( x < y \) & \texttt{X < Y.}  \\
+			\rowcolor{LightGray}\( x\leqslant y \)  & \texttt{X =< Y.}   \\
+			\rowcolor{LightGray}\( x = y \)  & \texttt{X =:= Y.}  \\
+			\rowcolor{LightGray}\( x\neq y \)  & \texttt{X =\= Y.}  \\
+			\rowcolor{LightGray}\( x\geqslant y \)  & \texttt{X >= Y.}  \\
+			\rowcolor{LightGray}\( x > y \)  & \texttt{X > Y.} \\
+		\end{tabular}
+	\end{table}
+	
+	
+\end{frame}
+
+
+\subsection{Арифметика применительно к спискам}
+
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Одно из главных применений численной арифметики в Prolog состоит в вычислении характеристик других структур данных.
+	В частности --- списков.
+	
+	Вспомним предикат \texttt{listLen/2}, вычисляющий длину списка:
+	
+	\texttt{\begin{itemize}
+		\item[] listLen([],0).
+		\item[] listLen([H|T],Len) :- listLen(T,TailLen), Len is TailLen + 1.
+	\end{itemize}}
+	
+	
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	Более эффективно это можно реализовать, используя хвостовую рекурсию и дополнительную память, где будет храниться текущее значение длины списка.
+	
+	\texttt{\begin{itemize}
+			\item[] accLen([\_|T],CurrLen,Len) :- NewLen is CurrLen + 1, \\ \quad\quad\quad\quad\quad\quad accLen(T,NewLen,Len).
+			\item[] accLen([],L,L).
+			\item[] listLen(List,Len) :- accLen(List,0,Len).
+	\end{itemize}}
+
+
+\end{frame}
+
+\section{Пример}
+\subsection{Максимальный элемент списка}
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\texttt{\begin{itemize}
+			\item[] accMax([H|T],CurrMax,Max) :- H > CurrMax,accMax(T,H,Max).
+			\item[] accMax([H|T],CurrMax,Max) :- H =< CurrMax,accMax(T,CurrMax,Max).
+			\item[] accMax([],Max,Max).
+			\item[] listMax([],\_) :- !,fail.
+			\item[] listMax([H|T],Max) :- accMax([H|T],H,Max),!.
+	\end{itemize}}
+	
+\end{frame}
+
+\subsection{Сумма элементов списка}
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\texttt{\begin{itemize}
+			\item[] sumVec([H|T],\_buffer,Sum) :- \_current is \_buffer + H, \\ \quad\quad\quad\quad\quad\quad sumVec(T,\_current,Sum).
+			\item[] sumVec([],Sum,Sum).
+			\item[] summarize(List,Sum) :- sumVec(List,0,Sum).
+	\end{itemize}}
+	
+	
+\end{frame}
+
+
+\subsection{Скалярное произведение векторов}
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\texttt{\begin{itemize}
+			\item[] dotProd([H1|T1],[H2|T2],\_buffer,Dot) :- \_curr is \_buffer + H1*H2,\\ \quad\quad\quad\quad\quad\quad dotProd(T1,T2,\_curr,Dot).
+			\item[] dotProd([],[],Dot,Dot).
+			\item[] dotproduct(\_v1,\_v2,Product) :- dotProd(\_v1,\_v2,0,Product).
+	\end{itemize}}
+	
+	
+\end{frame}
+
+
+\begin{frame}
+
+	\begin{center}
+		\Huge Задачи для самостоятельной работы
+	\end{center}
+
+\end{frame}
+
+
+\section{Самостоятельная работа}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+
+	\begin{enumerate}
+		\item Нарисовать конверт, не отрывая карандаша от бумаги и не проводя два раза по одной и той же линии.
+		Начальная точка задается в качестве параметра. Если путь существует, то следует вывести его, в противном случае~--- вернуть \texttt{false}.
+		\item Усовершенствовать решение таким образом, чтобы программа на вход принимала помеченный граф (или существовала возможность описать граф и сохранить его во внутренней базе данных),
+		и начальное положение "карандаша", и возвращала либо последовательность проходов, необходимых для решения задачи, либо \texttt{false}, если задача не имеет решения.
+	\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	
+	\begin{figure}
+		\includegraphics[scale=0.45]{envelope}
+	\end{figure}
+
+\end{frame}
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	
+	\begin{enumerate}
+		\setcounter{enumi}{2}
+		\item Даны два сосуда объемом 3 и 5 литров. Также имеется источник, из которого можно наполнить сосуды и куда можно вылить лишнюю воду.
+		Определить последовательность переливаний, необходимую для получения 4 литров воды в одном из сосудов.
+		\item Усовершенствовать решение предыдущей задачи таким образом, чтобы программа принимала на вход начальное состояние:
+		целочисленные объемы сосудов V1 и V2, начальное количество воды в каждом сосуде и требуемое количество воды. При этом V1 и V2 взаимно просты.
+		По начальному состоянию программа должна определить последовательность переливаний, необходимую для достижения целевого объема.
+		Если задача не имеет решения~--- программа должна возвращать \texttt{false}.
 	\end{enumerate}
 	
 \end{frame}

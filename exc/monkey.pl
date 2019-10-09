@@ -27,8 +27,8 @@
 % Среди решений будут избыточные, т.е. обезьяна может многократно
 % циклически катать ящик или ходить по полу.
 
-move(state(middle,onTheBox,middle,doesntHave), grab, state(middle,atop,middle,has)). % Если ящик и обезьяна в центре и обезьяна на ящике - она может схватить банан
-move(state(Pos,onTheFloor,BoxPos,H),climb,state(Pos,onTheBox,BoxPos,H)). % Если обезьяна рядом с ящиком (т.е. их позиции на полу совпадают), то она может залезть на ящик.
+move(state(middle,onTheBox,middle,doesntHave), grab, state(middle,onTheBox,middle,has)). % Если ящик и обезьяна в центре и обезьяна на ящике - она может схватить банан
+move(state(Pos,onTheFloor,Pos,H),climb,state(Pos,onTheBox,Pos,H)). % Если обезьяна рядом с ящиком (т.е. их позиции на полу совпадают), то она может залезть на ящик.
 move(state(Pos,onTheFloor,Pos,H),push(Pos,Pos1),state(Pos1,onTheFloor,Pos1,H)). % Обезьяна может переместить ящик с позиции Pos на Pos1, если она не стоит на ящике
 move(state(Pos,onTheFloor,BoxPos,H),go(Pos,Pos1),state(Pos1,onTheFloor,BoxPos,H)). % Обезьяна может перейти по полу из одной позиции в другую, не трогая ящик.
 
