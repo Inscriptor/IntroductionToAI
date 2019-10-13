@@ -1185,3 +1185,485 @@
 	\end{enumerate}
 	
 \end{frame}
+
+
+% Формальные грамматики (DCG)
+
+\lecture{Definite clause grammars}{dcg}
+
+\begin{frame}
+
+	\begin{center}
+		\Huge Понятие формальных грамматик
+	\end{center}
+
+\end{frame}
+
+\section{Понятие формальных грамматик}
+\subsection{Интуитивное определение}
+
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Одной из первых и основных областей применения Пролога является компьютерная лингвистика~--- обработка естественных языков
+	автоматически. Формальная грамматика~--- это множество правил, которые определяют, какие фразы из заданного алфавита (лексикона)
+	являются \textit{синтаксически корректными}. 
+	
+	Пролог предоставляет средства для описания подобных правил, а, следовательно, для
+	задания грамматик, что позволяет проверить любую фразу на корректность относительно заданной грамматики, а также по грамматике 
+	сгенерировать все возможные фразы, корректные относительно нее.
+	
+	Все фразы, синтаксически корректные относительно грамматики, называются \textbf{языком, порождаемым грамматикой}.
+	
+\end{frame}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Контестно-свободная грамматика является частным случаем формальной грамматики.
+	
+	\begin{table}
+		\centering
+		\begin{tabular}{ l }
+			\rowcolor{LightGray} sentense \(\rightarrow \) nounPhrase verbPhrase \\
+			\rowcolor{LightGray} nounPhrase \(\rightarrow \) article noun \\
+			\rowcolor{LightGray} verbPhrase \(\rightarrow \) verbExpr nounPhrase \\
+			\rowcolor{LightGray} article \(\rightarrow \) a \\
+			\rowcolor{LightGray} article \(\rightarrow \) the \\
+			\rowcolor{LightGray} noun \(\rightarrow \) cat \\
+			\rowcolor{LightGray} noun \(\rightarrow \) king \\
+			\rowcolor{LightGray} verbExpr \(\rightarrow \) may look at
+		\end{tabular}
+	\end{table}
+
+\end{frame}
+
+\subsection{Дерево разбора}
+
+\begin{frame}
+	
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Данная грамматика содержит 8 правил.
+		\item Символ \(\rightarrow \) означает переход в правиле: сущность из левой части правила можно разложить на составляющие таким образом, как указано
+		в правой части.
+		\item \texttt{sentence, nounPhrase, verbPhrase, article, noun, verbExpr}~--- нетерминальные символы (нетерминалы).
+		\item \textit{a, the, cat, king, may look at}~--- терминальные символы (терминалы). Множество терминалов также называют \textbf{алфавитом} или \textbf{лексиконом}.
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Рассмотрим старую английскую поговорку \textit{A cat may look at a king}.
+	
+	\begin{figure}
+		\includegraphics[scale=0.65]{gramtree}
+	\end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Дерево разбора (parse tree) содержит информацию о синтаксической корректности и о структуре заданной фразы.
+	
+	\begin{enumerate}
+		\item \textbf{Программа-распознаватель} (recognizer) по заданной строке сообщает, является ли эта строка синтаксически корректной относительно грамматики.
+		\item \textbf{Программа-парсер} сообщает, является ли фраза синтаксически корректной и строит parse tree.
+	\end{enumerate}
+
+\end{frame}
+
+\subsection{Контекстно-свободные языки}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item \textbf{Контекстно-свободным} называется язык, порождаемый контекстно-свободной грамматикой.
+		\item Среди естественных языков контекстно-свободными являются, например, английский, фразцузский и немецкий языки.
+		\item Многие языки программирования являются контекстно-свободными языками.
+		\item Контекстно-свободные грамматики применяются при разработке компиляторов.
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}
+
+	\begin{center}
+		\Huge Реализация КСГ на Прологе
+	\end{center}
+
+\end{frame}
+
+\section{Реализация КСГ на Прологе}
+\subsection{Recognizer}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Сначала опишем грамматику.
+	
+	\texttt{\begin{itemize}
+			\item[] sentense(S) :- nounPhrase(NP), verbPhrase(VP), append(NP,VP,S).
+			\item[] nounPhrase(NP) :- article(A), noun(N), append(A,N,NP).
+			\item[] verbPhrase(VP) :- verbExpr(VE), nounPhrase(NP), append(VE,NP,VP).
+			\item[] verbExpr(VE) :- modalVerb(MV),verb(V),prep(P),append([MV,V,P],VE).
+			\item[] article([A]) :- lexicon(''article'', A).
+			\item[] noun([N]) :- lexicon(''noun'',N).
+			\item[] modalVerb([MV]) :- lexicon(''modal verb'',MV).
+			\item[] verb([V]) :- lexicon(''verb'',V).
+			\item[] prep([P]) :- lexicon(''prep'',P).
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Лексикон иногда выносят отдельно.
+	
+	\texttt{\begin{itemize}
+			\item[] lexicon(''article``,''a``).
+			\item[] lexicon(''article``,''the``).
+			\item[] lexicon(''noun``,''cat``).
+			\item[] lexicon(''noun``,''king``).
+			\item[] lexicon(''verb``,''look``).
+			\item[] lexicon(''modal verb``,''may``).
+			\item[] lexicon(''prep``,''at``).
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Два предиката для удобства запуска программы. Первый распознает введенную строку, отвечая \texttt{true} или \texttt{false}, а второй генерирует все
+	фразы языка, порождаемого грамматикой.
+	
+	\texttt{\begin{itemize}
+			\item[] recognize :- write(''Enter the phrase: ''),current\_input(In), read\_string(In, ''\textbackslash n'', ''\textbackslash r\textbackslash t'', \_, Phrase), split\_string(Phrase,~''~'',~"''',~ListPhrase), sentense(ListPhrase),!.
+			\item[] generate :- sentense(Phrase), atomics\_to\_string(Phrase,'~',String),write(String).
+	\end{itemize}}
+
+\end{frame}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Данная программа не будет эффективной.
+	
+	\begin{itemize}
+		\item Она сначала пытается угадать фразу, а затем сравнивает ее с заданной.
+		\item Вопрос \texttt{sentense([''a'',''cat'',''may'',''look'',''at'',''a'',''king''])} заставит программу проверять все возможные фразы до тех пор, пока очередная
+		не совпадет с нужной.
+		\item Причина в том, что в предикаты \texttt{nounPhrase, verbPhrase} и прочие поступают неопределенные переменные, которые требуют означивания.
+		\item Это можно исправить, заставив программу сначала разбить фразу на части, а затем проверять эти части на соответствие правилам грамматики.
+	\end{itemize}
+	
+	
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	
+	В нашем случае это поможет при распознавании, но сломает генератор языка X\_X
+	
+	Кроме того, операция \texttt{append} очень дорогая и неэффективная.
+	
+	\texttt{\begin{itemize}
+			\item[] sentense(S) :- append(NP,VP,S), nounPhrase(NP), verbPhrase(VP).
+			\item[] nounPhrase(NP) :- append(A,N,NP), article(A), noun(N).
+			\item[] verbPhrase(VP) :- append(VE,NP,VP), verbExpr(VE), nounPhrase(NP).
+			\item[] verbExpr(VE) :- append([MV,V,P],VE), modalVerb(MV), verb(V), prep(P).
+	\end{itemize}}
+
+
+\end{frame}
+
+\subsection{Разностные списки}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\textbf{Разностный список} \texttt{L} представляется в виде двух списков \texttt{A} и \texttt{B} таких, что \texttt{L~=~A~\textbackslash~B}.
+	Первый список в паре содержит то, что надо оставить, включить в список \texttt{L}, а второй~--- то, что следует отбросить из того, что мы включили.
+	Один и тот же список можно представить в виде разностного списка бесконечным числом способов.
+	
+	\texttt{\begin{itemize}
+			\item[] [a, cat, may, look, at, a, king] []
+			\item[] [a, cat, may, look, at, a, king, wtf, omg] [wtf, omg]
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Так будет выглядеть описание грамматики с разностными списками вместо \texttt{append}.
+	
+	\texttt{\begin{itemize}
+			\item[] sentense(S,D) :- nounPhrase(S,VP), verbPhrase(VP,D).
+			\item[] nounPhrase(NP,D) :- article(NP,N), noun(N,D).
+			\item[] verbPhrase(VP,D) :- verbExpr(VP,VE), nounPhrase(VE,D).
+			\item[] verbExpr(VE,D) :- modalVerb(VE,MV), verb(MV,V), prep(V,D).
+			\item[] article([A|D],D) :- lexicon(''article'',A).
+			\item[] noun([N|D],D) :- lexicon(''noun'',N).
+			\item[] modalVerb([MV|D],D) :- lexicon(''modal verb'',MV).
+			\item[] verb([V|D],D) :- lexicon(''verb'',V).
+			\item[] prep([P|D],D) :- lexicon(''prep'',P).
+	\end{itemize}}
+
+\end{frame}
+
+\subsection{Специальный синтаксис}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Теперь рассмотрим, какие специальные средства предоставляет Prolog для описания грамматик.
+	
+	\texttt{\begin{itemize}
+			\item[] sentense -{}-\textgreater~nounPhrase, verbPhrase.
+			\item[] nounPhrase -{}-\textgreater~article, noun.
+			\item[] verbPhrase -{}-\textgreater~verbExpr, nounPhrase.
+			\item[] verbExpr -{}-\textgreater~modalVerb, verb, prep.
+			\item[] article -{}-\textgreater~[''a''].
+			\item[] article -{}-\textgreater~[''the''].
+			\item[] noun -{}-\textgreater~[''cat''].
+			\item[] noun -{}-\textgreater~[''king''].
+			\item[] modalVerb -{}-\textgreater~[''may''].
+			\item[] verb -{}-\textgreater~[''look''].
+			\item[] prep -{}-\textgreater~[''at''].
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\begin{center}
+		\Huge Рекурсивные правила
+	\end{center}
+
+\end{frame}
+
+\section{Рекурсивные правила}
+\subsection{Что может пойти не так?}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Допустим, мы хотим добавить соединительные правила для генерации бесконечных последовательностей утверждений.
+	
+	\begin{table}
+		\centering
+		\begin{tabular}{ l }
+			\rowcolor{LightGray} sentense \(\rightarrow \) sentense conjunction sentense \\
+			\rowcolor{LightGray} conjunction \(\rightarrow \) and \\
+			\rowcolor{LightGray} conjunction \(\rightarrow \) or \\
+			\rowcolor{LightGray} conjunction \(\rightarrow \) but \\
+		\end{tabular}
+	\end{table}
+	
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Нет ничего проще.
+	
+	\texttt{\begin{itemize}
+			\item[] sentense -{}-\textgreater~sentense, conjunction, sentense.
+			\item[] conjunction -{}-\textgreater~[''and''].
+			\item[] conjunction -{}-\textgreater~[''or''].
+			\item[] conjunction -{}-\textgreater~[''but''].
+	\end{itemize}}
+
+\end{frame}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Если добавить рекурсивное правило в начало, то любой запрос на распознавание фразы приведет к бесконечному циклу и, как следствие, зависанию.
+		Это произойдет потому, что в правиле первым стоит рекурсивный вызов. Любой запрос будет натыкаться на первое правило и бесконечно его применять.
+		\item Если убрать рекурсивное правило в конец, то синтаксически правильные фразы будут распознаваться, но введение фразы, не являющейся верной в данной
+		грамматике, опять-таки приведет к уходу в бесконечный цикл. На этот раз потому, что без возможности применить первое правило мы будем бесконечно пытаться применить второе.
+		\item В случае обычной рекурсии такой эффект устраняется перестановкой рекурсивного вызова с первого места дальше. Но в случае грамматик последовательность
+		предикатов в теле правила соответствует последовательности слов в синтаксически верных фразах, следовательно мы не можем менять предикаты местами.
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Так что же делать?
+	
+	\texttt{\begin{itemize}
+			\item[] plainSentense -{}-\textgreater~nounPhrase, verbPhrase.
+			\item[] sentense -{}-\textgreater~plainSentense.
+			\item[] sentense -{}-\textgreater~plainSentense, conjunction, sentense.
+	\end{itemize}}
+
+\end{frame}
+
+\subsection{Формальные языки}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Рассмотрим формальный язык \(a^nb^n \). Все слова данного языка состоят из двух последовательностей из равного количества букв \(a\) и \(b\),
+	идущих друг за другом. Пустое слово также является словом данного языка.
+	
+	\only<2->{\texttt{\begin{itemize}
+			\item[] s --> [].
+			\item[] s --> [a],s,[b].
+	\end{itemize}}}
+
+\end{frame}
+
+\begin{frame}
+
+	\begin{center}
+		\Huge Упражнения
+	\end{center}
+
+\end{frame}
+
+
+\section{Упражнения}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+
+	\begin{enumerate}
+		\item Реализуйте грамматику для языка \(a^nb^n - \{\mathcal{E} \}\).
+		\item Реализуйте грамматику для языка \(a^nb^{2m}c^{2m}d^n \).
+	\end{enumerate}
+	
+
+\end{frame}
+
+\section{Задачи для самостоятельной работы}
+
+\begin{frame}
+
+	\begin{center}
+		\Huge \insertsection
+	\end{center}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{\insertsection}
+
+	Реализовать контекстно-свободную грамматику для проверки корректности S-выражений в языке Clojure.
+	Будем рассматривать лишь подмножество его синтаксиса, исключив специфические компоненты.
+	
+	Основа синтаксиса определяется следующим образом:
+	
+	\begin{enumerate}
+		\item \textbf{Разделитель}. Пробел, табуляция, конец строки, запятая.
+		\item \textbf{Атом}.
+		\begin{enumerate}
+			\item Число. Ограничимся целыми.
+			\item Строка. Любая последовательность символов в двойных кавычках.
+			\item Идентификатор. Либо последовательность букв, цифр и спецсимволов, начинающаяся с буквы, либо последовательность спецсимволов. Например
+			\alert{-\textgreater} является валидным идентификатором. Можно ограничиться спецсимволами \alert{+, -, \textgreater, <, =}.
+			\item Ключевые слова. Ключевое слово~--- это идентификатор, предваряемый двоеточием. Например \alert{:Num, :x, :Identifier}.
+		\end{enumerate}
+		\item \textbf{S-выражение}.
+	\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+
+\frametitle{\insertsection}
+
+	S-выражение рекурсивно строится из атомов, разделителей и скобок.
+	
+	\begin{itemize}
+		\item Любой атом является S-выражением.
+		\item Последовательность S-выражений, разделенных разделителями и заключенная в круглые скобки, является S-выражением.
+		\textbf{(S1 S2 S3,S4)}.
+		\item Последовательность S-выражений, разделенных разделителями и заключенная в квадратные скобки, является S-выражением.
+		\textbf{[S1 S2 S3 S4]}.
+		\item Последовательность из четного числа S-выражений, разделенных разделителями и заключенная в фигурные скобки, является S-выражением.
+		\textbf{\{S1 S2 S3 S4\}}.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+\frametitle{\insertsection}
+
+	Программа должна принимать S-выражение, записанное в виде строки, и отвечать \texttt{true} в случае, когда выражение корректно относительно синтаксиса
+	языка Clojure, и \texttt{false} в противном случае.
+	
+	\begin{rexample}
+		s\_expression(''(inc 1)``). \\
+		s\_expression(''(+ [x y])``). \\
+		s\_expression(''((lambda x (nth [(tail x) 0])) (list \textbackslash''Some string\textbackslash``))``).\\
+		s\_expression(''\{list (-> A (:List A)),nth (-> (cross (:List A) :Num) (:List A)), tail (-> (:List A)  (:List A))\}``).
+	\end{rexample}
+
+\end{frame}
