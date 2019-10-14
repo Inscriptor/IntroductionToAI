@@ -1209,7 +1209,7 @@
 	\framesubtitle{\insertsubsection}
 	
 	Одной из первых и основных областей применения Пролога является компьютерная лингвистика~--- обработка естественных языков
-	автоматически. Формальная грамматика~--- это множество правил, которые определяют, какие фразы из заданного алфавита (лексикона)
+	автоматически. \textbf{Формальная грамматика}~--- это множество правил, которые определяют, какие фразы из заданного алфавита (лексикона)
 	являются \textit{синтаксически корректными}. 
 	
 	Пролог предоставляет средства для описания подобных правил, а, следовательно, для
@@ -1225,19 +1225,22 @@
 	\frametitle{\insertsection}
 	\framesubtitle{\insertsubsection}
 	
-	Контестно-свободная грамматика является частным случаем формальной грамматики.
+	\textbf{Контекстно-свободная} грамматика является частным случаем формальной грамматики.
 	
 	\begin{table}
 		\centering
 		\begin{tabular}{ l }
-			\rowcolor{LightGray} sentense \(\rightarrow \) nounPhrase verbPhrase \\
+			\rowcolor{LightGray} S \(\rightarrow \) nounPhrase verbPhrase \\
 			\rowcolor{LightGray} nounPhrase \(\rightarrow \) article noun \\
 			\rowcolor{LightGray} verbPhrase \(\rightarrow \) verbExpr nounPhrase \\
+			\rowcolor{LightGray} verbExpr \(\rightarrow \) modalVerb verb prep \\
 			\rowcolor{LightGray} article \(\rightarrow \) a \\
 			\rowcolor{LightGray} article \(\rightarrow \) the \\
 			\rowcolor{LightGray} noun \(\rightarrow \) cat \\
 			\rowcolor{LightGray} noun \(\rightarrow \) king \\
-			\rowcolor{LightGray} verbExpr \(\rightarrow \) may look at
+			\rowcolor{LightGray} modalVerb \(\rightarrow \) may \\
+			\rowcolor{LightGray} verb \(\rightarrow \) look \\
+			\rowcolor{LightGray} prep \(\rightarrow \) at
 		\end{tabular}
 	\end{table}
 
@@ -1251,10 +1254,10 @@
 	\framesubtitle{\insertsubsection}
 	
 	\begin{itemize}
-		\item Данная грамматика содержит 8 правил.
+		\item Данная грамматика содержит 11 правил.
 		\item Символ \(\rightarrow \) означает переход в правиле: сущность из левой части правила можно разложить на составляющие таким образом, как указано
 		в правой части.
-		\item \texttt{sentence, nounPhrase, verbPhrase, article, noun, verbExpr}~--- нетерминальные символы (нетерминалы).
+		\item \texttt{S, nounPhrase, verbPhrase, article, noun, verbExpr, modalVerb, verb, prep}~--- нетерминальные символы (нетерминалы).
 		\item \textit{a, the, cat, king, may look at}~--- терминальные символы (терминалы). Множество терминалов также называют \textbf{алфавитом} или \textbf{лексиконом}.
 	\end{itemize}
 	
@@ -1320,7 +1323,7 @@
 	\frametitle{\insertsection}
 	\framesubtitle{\insertsubsection}
 	
-	Сначала опишем грамматику.
+	Реализуем грамматику, приведенную выше. Сначала опишем правила стандартными средствами Prolog.
 	
 	\texttt{\begin{itemize}
 			\item[] sentense(S) :- nounPhrase(NP), verbPhrase(VP), append(NP,VP,S).
@@ -1342,7 +1345,8 @@
 	\frametitle{\insertsection}
 	\framesubtitle{\insertsubsection}
 	
-	Лексикон иногда выносят отдельно.
+	Предикат \texttt{lexicon/2} используется для описания алфавита. Таким образом мы отделяем описание
+	доступных нам лексем от описания грамматики. Это удобно.
 	
 	\texttt{\begin{itemize}
 			\item[] lexicon(''article``,''a``).
@@ -1366,8 +1370,14 @@
 	фразы языка, порождаемого грамматикой.
 	
 	\texttt{\begin{itemize}
-			\item[] recognize :- write(''Enter the phrase: ''),current\_input(In), read\_string(In, ''\textbackslash n'', ''\textbackslash r\textbackslash t'', \_, Phrase), split\_string(Phrase,~''~'',~"''',~ListPhrase), sentense(ListPhrase),!.
-			\item[] generate :- sentense(Phrase), atomics\_to\_string(Phrase,'~',String),write(String).
+			\item[] recognize :- write(''Enter the phrase: ''),\\
+			\quad\quad\quad\quad\quad\quad\quad current\_input(In),\\
+			\quad\quad\quad\quad\quad\quad\quad read\_string(In, ''\textbackslash n'', ''\textbackslash r\textbackslash t'', \_, Phrase),\\
+			\quad\quad\quad\quad\quad\quad\quad split\_string(Phrase,~''~'',~"''',~ListPhrase),\\
+			\quad\quad\quad\quad\quad\quad\quad sentense(ListPhrase),!.
+			\item[] generate :- sentense(Phrase),\\
+			\quad\quad\quad\quad\quad\quad\quad atomics\_to\_string(Phrase,'~',String),\\
+			\quad\quad\quad\quad\quad\quad\quad write(String).
 	\end{itemize}}
 
 \end{frame}
@@ -1405,7 +1415,10 @@
 			\item[] sentense(S) :- append(NP,VP,S), nounPhrase(NP), verbPhrase(VP).
 			\item[] nounPhrase(NP) :- append(A,N,NP), article(A), noun(N).
 			\item[] verbPhrase(VP) :- append(VE,NP,VP), verbExpr(VE), nounPhrase(NP).
-			\item[] verbExpr(VE) :- append([MV,V,P],VE), modalVerb(MV), verb(V), prep(P).
+			\item[] verbExpr(VE) :- append([MV,V,P],VE),\\
+			\quad\quad\quad\quad\quad\quad\quad\quad modalVerb(MV),\\
+			\quad\quad\quad\quad\quad\quad\quad\quad verb(V),\\
+			\quad\quad\quad\quad\quad\quad\quad\quad prep(P).
 	\end{itemize}}
 
 
@@ -1488,7 +1501,7 @@
 \end{frame}
 
 \section{Рекурсивные правила}
-\subsection{Что может пойти не так?}
+\subsection{Создаем соединительное правило}
 
 \begin{frame}
 
@@ -1527,6 +1540,8 @@
 
 \end{frame}
 
+\subsection{Что может пойти не так?}
+
 \begin{frame}
 
 	\frametitle{\insertsection}
@@ -1548,7 +1563,7 @@
 	\frametitle{\insertsection}
 	\framesubtitle{\insertsubsection}
 	
-	Так что же делать?
+	Так что же делать? \textbf{Вводить дополнительные нетерминалы}.
 	
 	\texttt{\begin{itemize}
 			\item[] plainSentense -{}-\textgreater~nounPhrase, verbPhrase.
@@ -1568,7 +1583,7 @@
 	Рассмотрим формальный язык \(a^nb^n \). Все слова данного языка состоят из двух последовательностей из равного количества букв \(a\) и \(b\),
 	идущих друг за другом. Пустое слово также является словом данного языка.
 	
-	\only<2->{\texttt{\begin{itemize}
+	\uncover<2->{\texttt{\begin{itemize}
 			\item[] s --> [].
 			\item[] s --> [a],s,[b].
 	\end{itemize}}}
@@ -1613,7 +1628,7 @@
 \frametitle{\insertsection}
 
 	Реализовать контекстно-свободную грамматику для проверки корректности S-выражений в языке Clojure.
-	Будем рассматривать лишь подмножество его синтаксиса, исключив специфические компоненты.
+	Будем рассматривать лишь его подмножество, исключив специфические компоненты.
 	
 	Основа синтаксиса определяется следующим образом:
 	
