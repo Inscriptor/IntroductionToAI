@@ -1,10 +1,20 @@
 \documentclass[c,aspectratio=169]{beamer}
 
+\usetheme[hideallsubsections]{Berkeley}
+\usecolortheme{whale}
+
+\setbeamertemplate{footline}
+{
+	\hbox{\begin{beamercolorbox}[wd=1\paperwidth,ht=2.25ex,dp=1ex,right]{framenumber}%
+			\usebeamerfont{framenumber}\insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
+	\end{beamercolorbox}}%
+	\vskip0pt%
+}
+
 \input{packages}
 \input{setup}
 
 \title{Introduction to the Artificial Intelligence methods}
-\author{https://github.com/Inscriptor/IntroductionToAI/tree/master/pdf}
 \institute[Novosibirsk State Univercite]{Federal State Educational Institution of Higher Professional Education <<Novosibirsk State University>> (National Research University)}
 
 
