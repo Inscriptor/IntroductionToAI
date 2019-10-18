@@ -157,7 +157,7 @@
 	\framesubtitle{\insertsubsection}
 	
 	\only<1>{
-		Automation with a jump arc.
+		Automaton with a jump arc.
 		\begin{figure}
 			\includegraphics[scale=0.8]{screaming_machine_with_jumps}
 		\end{figure}
@@ -171,7 +171,7 @@
 	}
 
 	\only<3->{
-		Automation with multiple final states.
+		Automaton with multiple final states.
 		\begin{figure}
 			\includegraphics[scale=0.85]{multiple_finals}
 		\end{figure}
@@ -571,7 +571,7 @@
 	\frametitle{\insertsection}
 	\framesubtitle{\insertsubsection}
 	
-	This is a transducer that translates 0s into 1s:
+	This is a transducer that translates 0s into 1s (or vice versa):
 	
 	\begin{figure}
 		\includegraphics[scale=0.9]{simple_transducer}
@@ -626,4 +626,198 @@
 		\item Translation mode (right to left): It reads 0s from the second tape and writes half as many onto the first one.
 	\end{itemize}
 	
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	In implementing FST in Prolog, we represent it as a static data structure that other programs manipulate.
+	Note that to be able to write 0:1 as the label of the arc, we have to define colon as an infix operator as is done by the operator definition.
+	
+	\texttt{\begin{itemize}
+			\item[] :- op(250,xfx,:).
+			\item[] 
+			\item[] start(1).
+			\item[] end(1).
+			\item[] arc(1,1,0:1).
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Now, we need a program that can manipulate these data structures and carry out the transduction.
+	
+	\texttt{\begin{itemize}
+			\item[] traverse(S1:S2,[S1|Tape1],Tape1,[S2|Tape2],Tape2).
+			\item[] transduce(Node,[],[]) :- end(Node).
+			\item[] transduce(N,T1,T2) :- arc(N,Nx,St), \\ \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad traverse(St,T1,NT1,T2,NT2),
+			 \\ \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad transduce(Nx,NT1,NT2).
+			\item[]
+			\item[] run(T1,T2) :- start(N),transduce(N,T1,T2).
+	\end{itemize}}	
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Executing program with the first, second or both parameters undefined we can run the transducer in various modes.
+	
+	\begin{figure}
+		\includegraphics[scale=0.27]{transducer1_screen}
+	\end{figure}
+
+\end{frame}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	To be able to use the second transducer, the zero doubler we need a program that can handle transitions involving jumps.
+	The only thing that changes is the way that the tapes are treated when making a transition.
+	This is taken care of by the \texttt{traverse1/4} predicate and this is all we have to adapt.
+	
+	\texttt{\begin{itemize}
+			\item[] traverse1('\#':S2,Tape1,Tape1,[S2|Tape2],Tape2).
+			\item[] traverse1(S1:S2,[S1|Tape1],Tape1,[S2|Tape2],Tape2).
+	\end{itemize}}	
+
+\end{frame}
+
+
+\begin{frame}
+
+\frametitle{\insertsection}
+\framesubtitle{\insertsubsection}
+
+	And this is how it works.
+	
+	\begin{figure}
+		\includegraphics[scale=0.27]{transducer2_screen}
+	\end{figure}
+
+\end{frame}
+
+
+\subsection{Morphological Analysis with Finite State Transducers}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Morphology is about the internal structure of words.
+		\item It asks of what are the building blocks -- the morphemes -- that a word is constructed from and what is the meaning of these blocks.
+		 And what are the rules by which these building blocks can be combined to form words?
+		\item For instance the word \textit{''share``} consists of one morpheme \textit{share}, while \textit{''shared``} consists of two morphemes, namely
+		the \textbf{stem} \textit{share} and the past tense \textit{d}. The word \textit{''blessed``} also consists of two morphemes, but now the past tense
+		is \textit{ed}.
+		\item Morphology is an area of computational linguistics where finite state technology has been found to be particularly useful, because for many languages the rules after which morphemes can be combined to build words can be caputered by finite state automata.
+		\item It is possible to write finite state transducers that map the surface form of a word to a description of the morphemes that constitute that word or vice versa.
+	\end{itemize}
+	
+
+\end{frame}
+
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Such transducers could, for instance, map \textit{share+s} and \textit{bless+ed} to \textit{share+PAST} and \textit{bless+PAST} respectively.
+		\item As an example we will look at past forms of verbs in English.
+		\item The default rule is to add \textit{ed} or \textit{d} to a normal form.
+		\item But there also are the irregular verbs, such as \textit{run}, \textit{teach}, \textit{think} etc.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	We want a transducer that would translate \textit{shared} to \textit{share-PAST}, \textit{blessed} to \textit{bless-PAST}, \textit{thought} to \textit{think-PAST} and so on.
+	
+	\begin{figure}
+		\includegraphics[scale=0.67]{morphtransducer}
+	\end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	As before, we split our lexicon into categories.
+	
+	\texttt{\begin{itemize}
+			\item[] lex(bless:bless, 'STEM-REG2').
+			\item[] lex(share:share, 'STEM-REG1').
+			\item[] lex(run:run, 'IRREG-NORM').
+			\item[] lex(think:think, 'IRREG-NORM').
+			\item[] lex(ran:'run-PAST', 'IRREG-PAST').
+			\item[] lex(thought:'think-PAST', 'IRREG-PAST').
+			\item[] \ldots
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item The above transducer assumes that the words are already split up into morphemes (such as stem and the past tense suffix).
+		\item If it was implemented in Prolog it would assume input of the form \texttt{[share,d]} on the first tape.
+		\item In order to be able to input plain strings we should use another transducer that would split the strings for us, and then use these two transducers in a cascade.
+		\item That is, we let the morphological transducer run on the output of the splitting transducer, and compose them into a single transducer that performs both tasks.
+	\end{itemize}
+	
+\end{frame}
+
+
+\section{Finite State Methods in NLP}
+
+\begin{frame}
+
+	\begin{center}
+		\Huge \insertsection
+	\end{center}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	
+	\begin{enumerate}
+		\item Morphology
+		\item Morph parsing
+		\item Regular relation and languages
+	\end{enumerate}
+
 \end{frame}
