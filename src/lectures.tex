@@ -741,7 +741,7 @@
 	\framesubtitle{\insertsubsection}
 	
 	\begin{itemize}
-		\item Such transducers could, for instance, map \textit{share+s} and \textit{bless+ed} to \textit{share+PAST} and \textit{bless+PAST} respectively.
+		\item Such transducers could, for instance, map \textit{share+d} and \textit{bless+ed} to \textit{share+PAST} and \textit{bless+PAST} respectively.
 		\item As an example we will look at past forms of verbs in English.
 		\item The default rule is to add \textit{ed} or \textit{d} to a normal form.
 		\item But there also are the irregular verbs, such as \textit{run}, \textit{teach}, \textit{think} etc.
@@ -819,5 +819,229 @@
 		\item Morph parsing
 		\item Regular relation and languages
 	\end{enumerate}
+
+\end{frame}
+
+
+\subsection{Morphology}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Morphology is interested in what are the smallest units in word that bear some meaning and how can they be combined to form words.
+		\item The smallest unit in a word that bear some meaning are called \textbf{morphemes}.
+		\item Morphemes that contribute the main meaning of a word are called \textbf{stems}, while the other morphemes are known as \textbf{affixes}.
+		\item How can morphemes be combined to form words that are legal in some language ?
+	\end{itemize}
+
+\end{frame}
+
+\subsection{Morph parsing}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	The goal of \textbf{morphological parsing} is to find out what morphemes a given word is built from.
+	
+	\begin{table}
+			\centering
+			\begin{tabular}{ l c l }
+				\rowcolor{LightGray} car & car & Noun SG \\
+				\rowcolor{LightGray} cars & car & Noun PL \\
+				\rowcolor{LightGray} foot & foot & N SG \\
+				\rowcolor{LightGray} feet & foot & Noun PL \\
+				\rowcolor{LightGray} bosses & boss & N PL \\
+			\end{tabular}
+	\end{table}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Morphological parsing yields information that, for instance helps to know the agreement features of words.
+	Grammar checkers need to know agreement information to detect mistakes. 
+	Morphological information also helps spell checkers to decide whether something is a possible word or not, 
+	and in information retrieval it is used to search not only one form of a word, but also all other possible forms.
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	To get morphological information about a word, given it's surface form, we need to proceed in some steps.
+	
+	\begin{itemize}
+		\item Split a word up into it's possible components and indicate morpheme boundaries. For example, we are going to make \textit{car+s} out of \textit{cars}.
+		There may be multiple ways of splitting up a word.
+		\item Use a lexicon of stems to look up the categories of the stems and the meaning of the affixes. So \textit{boss+s} will be mapped
+		to \textit{boss~Noun~PL}, and \textit{feet} to \textit{foot~Noun~PL}.
+	\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{table}
+		\centering
+		\begin{tabular}{ l | c | l }
+			\rowcolor{Gray}
+			\textbf{Surface form} & \textbf{Intermediate form} & \textbf{Morphological Structure} \\
+			\rowcolor{LightGray} car & car & car Noun SG \\
+			\rowcolor{LightGray} cars & car+s & car Noun PL \\
+			\rowcolor{LightGray} foot & foot & foot N SG \\
+			\rowcolor{LightGray} feet & feet & foot Noun PL \\
+			\rowcolor{LightGray} bosses & boss+s & boss N PL \\
+		\end{tabular}
+	\end{table}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	From the surface form to the intermediate form.
+	
+	\begin{figure}
+		\includegraphics[scale=0.67]{surface2imf}
+	\end{figure}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	From the Intermediate Form to the Morphological Structure.
+	
+	The input that this transducer has to accept is of one of the following:
+	
+	\begin{enumerate}
+		\item Regular noun stem (\textit{car, boss, etc.}). Map all symbols of the stem to themselves and then output \textbf{N} and \textbf{SG}.
+		\item Regular noun stem + s (\textit{car+s, boss+s, etc.}). Map all symbols of the stem to themselves, and then output \textbf{N} and replace \textbf{s} with \textbf{PL}.
+		\item Singular irregular noun stem (\textit{foot, woman, etc.}). Do the same as in the first case.
+		\item Plural irregular noun stem (\textit{feet}). Map the irregular plural noun stem to the corresponding singular stem, and then add \textbf{N} and \textbf{PL}.
+	\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	From the Intermediate Form to the Morphological Structure.
+	
+	\begin{figure}
+		\includegraphics[scale=0.67]{imf2udl}
+	\end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item What still needs to be specified is how exactly the parts between state 1 and states 2,3, and 4 respectively look like.
+		\item We need to recognize noun stems and decide whether they are regular or not.
+		\item it is done by encoding a lexicon.
+	\end{itemize}
+	
+	\begin{figure}
+		\includegraphics[scale=0.67]{feet2foot}
+	\end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item If we let the two transducers run in a cascade, we can do a morphological parse of (some) English noun phrases.
+		\item We can also use this transducer for generating a surface form from an underlying form.
+		\item There are algorithms for combining several cascaded tranducers or multiple transducers that are supposed to be applied in parallel into a single transducer. However, these algorithms only work, if the individual transducers obey some restrictions so that some care has to be taken when specifying them.
+	\end{itemize}
+	
+\end{frame}
+
+
+\subsection{Regular relations and languages}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item As we have seen before, we don't always have to specify one big transducer that can deal with all spelling rules, but that it is enough to specify one small transducer per rule, because there are ways of combining these individual transducers into one big transducer.
+		\item Still you might think that specifying the e-insertion transducer was actually quite tricky.
+		\item But there is way of formulating spelling rules that makes it possible to automatically translate them into transducers.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item The languages that FSA can recognize are called \textbf{regular}.
+		\item Every Regular Language can be specified with a \textbf{Regular Expression}.
+		\begin{enumerate}
+			\item Let us have an \textbf{alphabet} \(\Sigma = (c_1,c_2,\ldots,c_k) \). For every \textbf{i} \(c_i\) is a regular expression.
+			\item \(\varepsilon \) is a regular expression (an empty word).
+			\item If \(\alpha_1 \) and \(\alpha_2 \) are regular expressions then \((\alpha_1 | \alpha_2) \) and \((\alpha_1)(\alpha_2) \) are
+			regular expressions.
+			\item If \(\alpha \) is a regular expression then \((\alpha)^{*} \) is a regular expression.
+		\end{enumerate}
+		\item \textbf{There is a systematic way of translating regular expressions into finite state automata.}
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Finite state transducers recognize tuples of strings.
+		\item A set of tuples of strings that can be recognized by an FST is called a \textbf{Regular Relation}.
+		\item Languge spelling rules can be specified as regular relations.
+		\item There are algorithms for translating such rule systems (at least, as long as they obey certain restrictions) into transducers.
+	\end{itemize}
 
 \end{frame}
