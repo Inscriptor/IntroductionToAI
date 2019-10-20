@@ -1682,3 +1682,221 @@
 	\end{rexample}
 
 \end{frame}
+
+
+
+% Операции с файлами и экспорт предикатов
+
+\lecture{Working with files}{files}
+
+
+\section{Разделение программ и модульность}
+
+\begin{frame}
+
+	\begin{center}
+		\Huge \insertsection
+	\end{center}
+
+\end{frame}
+
+\subsection{Переиспользование кода}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item[] Чтобы указать интерпретатору о необходимости предварительно прочитать дополнительный код, в начало программы следует добавить список требуемых
+		файлов:
+		\item[]
+		\only<1>{
+			\item[] \texttt{:- [source1, source2, \ldots]}
+			\item[]
+			\item[] Данная инструкция заставит интерпретатор сначала обработать (\textbf{consult}) все файлы из заданного списка, а затем прочитать текущий файл.
+		}
+		\only<2>{
+			\item[] \texttt{ensure\_loaded([source1, source2, \ldots])}
+			\item[]
+			\item[] Предикат \texttt{ensure\_loaded/1} для каждого указанного файла в списке проверяет, был ли он прочитан ранее, и если да, то изменилось
+			ли что-нибудь в нем. Если файл не был прочитан, или с момента последнего чтения был изменен~--- происходит его компиляция. Рекомендуется всегда
+			использовать данный предикат вместо более простой предыдущей записи.
+		}
+	\end{itemize}
+	
+\end{frame}
+
+
+\subsection{Модули и экспорт}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Допустим, у нас имеется 2 файла \texttt{source1.pl} и \texttt{source2.pl}, в которых определены нужные нам предикаты \texttt{func1} и
+		\texttt{func2} соответственно. Допустим, также, что в каждом из файлов определен свой предикат \texttt{auxFunc}, от которого зависят
+		предикаты \texttt{func1} и \texttt{func2}.
+		\item Если мы попытаемся загрузить файлы предыдущим способом, то, скорее всего, мы получим сообщение об ошибке. Либо, что еще хуже, определение
+		предиката \texttt{auxFunc} из файла \texttt{source2.pl} затрет предыдущее определение, что может привести к ошибкам в работе предиката \texttt{func1}.
+		\item Нашу текущую программу не интересуют зависимости предикатов \texttt{func1} и \texttt{func2}.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item[] Вместо полной обработки файлов \texttt{source1.pl} и \texttt{source2.pl} мы можем объявить их \textbf{модулями} и экспортировать те предикаты, которые должны быть видны извне.
+		\item[]
+		\item[] \texttt{:- module(Name, ListOfPredicatesToExport).}
+		\item[] \texttt{:- module(mod1, [func1/1]).}
+		\item[]
+		\item[] Модульность позволяет скрыть определения предикатов, которые нужны только внутри модуля. Предикаты, которые могут быть вызваны снаружи модуля, называются \textit{публичными (public)}, остальные~--- \textit{приватными (private)}.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item[] Чтобы \textbf{импортировать} модуль, необходимо в начало программы добавить вызов предиката \texttt{use\_module}.
+		\item[]
+		\only<1>{
+			\item[] \texttt{:- use\_module(moduleName).}
+			\item[] \texttt{:- use\_module(source1).}
+			\item[]
+			\item[] Предикат \texttt{use\_module/1} импортирует все public-предикаты из модуля.
+		}
+		\only<2->{
+			\item[] \texttt{:- use\_module(moduleName, ListOfPredicatesToImport).}
+			\item[] \texttt{:- use\_module(source1, [func1/1]).}
+			\item[]
+			\item[] В то время, как \texttt{use\_module/2} позволяет указать список	предикатов, которые необходимо импортировать.
+		}
+	\end{itemize}
+
+\end{frame}
+
+
+\subsection{Библиотеки}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Если при импорте указать, что загружаемый модуль является библиотекой, интерпретатор будет искать его не в текущей директории, в
+		месте хранения библиотек.
+		\item \texttt{:- use\_module(library(lib)).}
+		\item SWI-Prolog предоставляет множество встроенных предикатов и дополнительных библиотек, в том числе для работы с графическими компонентами.
+		\item Другие реализации, например Sicstus, не имеют встроенных предикатов, а весь вспомогательный инструментарий реализован в виде библиотек.
+		\item В различных реализациях Пролога один и тот же функционал может быть реализован по-разному, поэтому, если требуется, чтобы программа работала одинаково вне зависимости от интерпретатора, рекомендуется не полагаться на библиотеки и по возможности реализовывать критически важный функционал
+		самостоятельно.
+	\end{itemize}
+
+\end{frame}
+
+
+\section{Чтение и запись файлов}
+
+\begin{frame}
+
+	\begin{center}
+		\Huge \insertsection
+	\end{center}
+
+\end{frame}
+
+\subsection{Открыть файл, закрыть файл}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item[] Прежде, чем можно будет приступить к работе с файлом, его необходимо открыть при помощи предиката \texttt{open/3}.
+		\item[]
+		\item[] \texttt{open(+FileName,+Mode,-Stream)}
+		\item[]
+		\item[] Предикат принимает 2 параметра и отдает 1 в качестве результата:
+		\begin{itemize}
+			\item \texttt{FileName}~--- имя файла. Ничего необычного.
+			\item \texttt{Mode}. Режим работы с файлом: \texttt{read, write, append}.
+			\item \texttt{Stream}. Уникальный идентификатор потока, присвоенный Прологом.
+		\end{itemize}
+		\item[] В случае открытия файла в режимах \texttt{write} или \texttt{append} если файла с заданным именем не существует~--- он будет создан.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	В целом, сеанс связи с файлом выглядит примерно так:
+	
+	\texttt{\begin{itemize}
+		\item[] open(myfile,write,Stream),
+		\item[] \ldots
+		\item[] do something,
+		\item[] \ldots
+		\item[] close(Stream),
+		\item[] \ldots
+	\end{itemize}}
+
+\end{frame}
+
+
+\subsection{Чтение и запись}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Для записи в файл используются те же предикаты, что и для вывода в консоль: \texttt{write, writeln, tab, nl}. Только на этот раз
+	первым параметром приходится указывать идентификатор потока файла.
+	
+	\texttt{\begin{itemize}
+			\item[] writeFile :- open('out.txt',write,Out), \\ \quad\quad\quad\quad\quad\quad
+			write(Out,'Hello,World!'), close(Out).
+	\end{itemize}}
+
+	Очевидно, что первым параметром предиката \texttt{open/3} может быть и путь к файлу. Также, может понадобиться предикат \texttt{working\_directory/2},
+	если требуется сменить текущую рабочую директорию.
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Чтение осуществляется предикатом \texttt{read/2}.
+	
+	\texttt{\begin{itemize}
+			\item[] readFile :- open('in.txt',read,In), \\ \quad\quad\quad\quad\quad\quad
+			read(In, Input),\\ \quad\quad\quad\quad\quad\quad
+			writeln(Input), \\ \quad\quad\quad\quad\quad\quad
+			close(Out).
+	\end{itemize}}
+
+\end{frame}
