@@ -1900,3 +1900,443 @@
 	\end{itemize}}
 
 \end{frame}
+
+
+
+% Расширенные возможности грамматик
+
+\lecture{Advanced in DCG}{dcgadv}
+
+
+\section{Дополнительные аргументы}
+
+\begin{frame}
+
+	\begin{center}
+		\Huge \insertsection
+	\end{center}
+
+\end{frame}
+
+\subsection{Контекстно-свободные грамматики с параметрами}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Вспомним грамматику, построенную в прошлый раз.
+	
+	\begin{table}
+		\centering
+		\begin{tabular}{ l }
+			\rowcolor{LightGray} S \(\rightarrow \) nounPhrase verbPhrase \\
+			\rowcolor{LightGray} nounPhrase \(\rightarrow \) article noun \\
+			\rowcolor{LightGray} verbPhrase \(\rightarrow \) verbExpr nounPhrase \\
+			\rowcolor{LightGray} verbExpr \(\rightarrow \) modalVerb verb prep \\
+			\rowcolor{LightGray} article \(\rightarrow \) a \\
+			\rowcolor{LightGray} article \(\rightarrow \) the \\
+			\rowcolor{LightGray} noun \(\rightarrow \) cat \\
+			\rowcolor{LightGray} noun \(\rightarrow \) king \\
+			\rowcolor{LightGray} modalVerb \(\rightarrow \) may \\
+			\rowcolor{LightGray} verb \(\rightarrow \) look \\
+			\rowcolor{LightGray} prep \(\rightarrow \) at
+		\end{tabular}
+	\end{table}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Она порождает фразы следующего вида.
+	
+	\begin{itemize}
+		\item A cat may look at a king
+		\item A cat may look at the king
+		\item A king may look at a cat
+		\item A king may look at the cat
+		\item The cat may look at a king
+		\item The king may look at a cat
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	OK, допустим, что мы хотим добавить сюда личные местоимения, которые хотим использовать в качестве подлежащего или дополнения.
+	
+	\begin{itemize}
+		\item He may look at her
+		\item A cat may look at him
+		\item A king may look at her
+		\item She may look at a cat
+	\end{itemize}
+
+	И тому подобное \ldots
+	
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Добавим немного правил для описания местоимений и правило, указывающее на то, что \texttt{nounPhrase} может состоять не только из
+	артикля и имени существительного, но и из местоимения.
+	
+	\texttt{\begin{itemize}
+			\item[] pro -{}-\textgreater ["he"].
+			\item[] pro -{}-\textgreater ["him"].
+			\item[] pro -{}-\textgreater ["she"].
+			\item[] pro -{}-\textgreater ["her"].
+			\item[] nounPhrase -{}-\textgreater pro.
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Такая грамматика действительно будет распознавать и генерировать фразы, которые мы хотели добавить в язык, но, вместе с тем, и
+	другие, синтаксически некорректные с точки зрения английской грамматики.
+	
+	\begin{itemize}
+		\item Him may look at a cat
+		\item He may look at she
+		\item The king may look at she
+		\item The cat may look at she
+	\end{itemize}
+	
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item DCG~--- это модель, которую мы должны описать самостоятельно, и она не обладает никакими дополнительными знаниями о структуре языка.
+		\item В частности, она не знает о правилах построения предложений в английском языке.
+		\item В английском \textbf{he} и \textbf{she}~--- это субъектные личные местоимения (\textbf{subjective case}), и они не могут в предложении стоять на
+		позиции объектов. Поэтому предложение \textit{A cat may look at she} некорректно.
+		\item Аналогично, \textbf{him} и \textbf{her}~--- это объектные местоимения (\textbf{objective case}), соответственно, они не могут стоять на
+		суъектной позиции в предложении. Предложение \textit{Him may look at a cat} также некорректное.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{table}
+		\centering
+		\begin{tabular}{| c | c | c | c | c |}
+			\hline
+			\multirow{2}{*}{\textbf{PERSONS}} & \multicolumn{2}{|c|}{\textbf{SINGULAR}} & \multicolumn{2}{|c|}{\textbf{PLURAL}} \\ \cline{2-5}
+			& \textbf{Subjective Case} & \textbf{Objective Case} & \textbf{Subjective Case} & \textbf{Objective Case} \\
+			\hline
+			\textbf{\(1^{st}\) person} & I & me & we & us \\
+			\hline
+			\textbf{\(2^{nd}\) person} & you & you & you & you \\
+			\hline
+			\textbf{\(3^{rd}\) person} & he,she,it & him,her,it & they & them \\
+			\hline
+		\end{tabular}
+	\end{table}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Чтобы исправить это, понадобятся дополнительные ограничения, а значит~--- и дополнительные правила в DCG.
+	
+	\texttt{\begin{table}
+			\centering
+			\begin{tabular}{l r}
+				sentense -{}-\textgreater ~subjNP, verbPhrase. & spr -{}-\textgreater ~~["he"]. \\
+				subjNP -{}-\textgreater ~article, noun. & spr -{}-\textgreater ~["she"]. \\
+				subjNP -{}-\textgreater ~spr. & opr -{}-\textgreater ~["him"]. \\
+				objNP -{}-\textgreater ~article, noun. & opr -{}-\textgreater ~["her"]. \\
+				objNP -{}-\textgreater ~opr. & \\
+				verbPhrase -{}-\textgreater ~verbExpr, objNP. & \\
+			\end{tabular}
+	\end{table}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Данное решение работает, но не является эффективным.
+		\item Относительно небольшие изменения в лексиконе повлекли значительные изменения в правилах грамматики.
+		\item \textbf{He} и \textbf{him} (а также \textbf{she} и \textbf{her}) есть, по сути, одно и то же местоимение, только в разных формах.
+		\item Данные формы обладают во многом схожими свойствами.
+		\item Полученное решение может быть приемлемым только на очень небольших задачах, т.к. при расширении лексикона и языка мы можем столкнуться с
+		необходимостью добавить десятки новых правил.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Рассмотрим следующую программу.
+	
+	\texttt{\begin{table}
+			\centering
+			\begin{tabular}{l l}
+				sentense -{}-\textgreater~ nounPhrase(subj),verbPhrase. & article -{}-\textgreater~ ["a"]. \\
+				nounPhrase(\_) -{}-\textgreater~ article, noun. & article -{}-\textgreater~ ["the"]. \\
+				nounPhrase(P) -{}-\textgreater~ pro(P). & noun -{}-\textgreater~ ["cat"]. \\
+				verbPhrase -{}-\textgreater~ verbExpr, nounPhrase(obj). & noun -{}-\textgreater~ ["king"]. \\
+				verbExpr -{}-\textgreater~ modalVerb, verb, prep. & pro(subj) -{}-\textgreater~ ["he"]. \\
+				modalVerb -{}-\textgreater~ ["may"]. & pro(subj) -{}-\textgreater~ ["she"]. \\
+				verb -{}-\textgreater~ ["look"]. & pro(obj) -{}-\textgreater~ ["him"]. \\
+				prep -{}-\textgreater~ ["at"]. & pro(obj) --> ["her"].
+			\end{tabular}
+	\end{table}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Данное решение \textbf{не содержит новых правил, кроме тех, что нужны для описания новых конструкций языка}.
+		\item Можно сказать, что мы ввели новые признаки для описания различных типов предметных выражений (noun phrases).
+		\item Дополнительные аргументы в правилах были использованы для того, чтобы показать, какие местоимения могут стоять на позиции субъекта, а какие~--- на позиции объекта.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Где располагаются дополнительные аргументы в полной версии правила? Как мы помним, операция \texttt{-{}-\textgreater}~ --- это всего лишь краткая запись
+	обычных правил Пролога, где опущены два аргумента, задающие разностные списки.
+	
+	\texttt{\begin{itemize}
+			\item[] sentense -{}-\textgreater~ nounPhrase,verbPhrase.
+			\item[] sentense(A,B) :- nounPhrase(A,C),verbPhrase(C,B).
+			\item[]
+			\item[] sentense -{}-\textgreater~ nounPhrase(subj),verbPhrase.
+			\item[] sentense(A,B) :- nounPhrase(subj,A,C),verbPhrase(C,B).
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Несмотря на простоту, грамматики с дополнительными аргументами являются мощным иснтрументом для описания сложных синтаксических конструкций.
+	Имея представление о том, как задавать DCG с дополнительными параметрами, можно моделировать достаточно сложные языки и решать множество задач.
+	Хотя DCG более не используются так широко, как до появления алгоритмов машинного обучения, не стоит недооценивать их эффективность и выразительность.
+	В частности, DCG (и регулярные модели) до сих пор используются при разработке компиляторов, морфологических парсеров и лемматизаторов.
+	
+\end{frame}
+
+
+\subsection{Построение деревьев грамматического разбора}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item До сих пор наши программы, использующие DCG, могли ответить \textbf{<<да>>} или \textbf{<<нет>>} на вопрос, является ли заданное предложение фразой языка грамматики и сгенерировать все фразы этого языка.
+		\item Как правило, такой информации недостаточно, и мы хотим узнать, как именно происходит разбор предложений, т.е. построить дерево разбора (parse tree).
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{figure}
+		\includegraphics[scale=0.65]{gramtree}
+	\end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\texttt{\begin{itemize}
+			\item[] sentense(s(NP,VP)) -{}-\textgreater~ nounPhrase(NP), verbPhrase(VP).
+			\item[] nounPhrase(np(A,N)) -{}-\textgreater~ article(A), noun(N).
+			\item[] verbPhrase(vp(VE,NP)) -{}-\textgreater~ verbExpr(VE), nounPhrase(NP).
+			\item[] verbExpr(ve(MV,V,P)) -{}-\textgreater~ modalVerb(MV), verb(V), prep(P).
+			\item[] article(art("a")) -{}-\textgreater~ ["a"].
+			\item[] article(art("the")) -{}-\textgreater~ ["the"].
+			\item[] noun(n("cat")) -{}-\textgreater~ ["cat"].
+			\item[] noun(n("king")) -{}-\textgreater~ ["king"].
+			\item[] modalVerb(mv("may")) -{}-\textgreater~ ["may"].
+			\item[] verb(v("look")) -{}-\textgreater~ ["look"].
+			\item[] prep(p("at")) -{}-\textgreater~ ["at"].
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Задав в качестве входных данных нашу обычную фразу, получим ответ \texttt{true} и полную структуру разбора.
+	
+	\begin{itemize}
+		\item[] a cat may look at a king
+		\item[]
+		\item[] s(np(art(''a``), n(''cat``)), vp(ve(mv(''may``), v(''look``), p(''at``)), np(art(''a``), n(''king``)))).
+	\end{itemize}
+
+	Очевидно, что такой вид дерева разбора не является обязательным и единственно верным. Для решения задач можно описывать дерево так, как это наиболее удобно для дальнейшей его обработки.
+
+\end{frame}
+
+
+
+\section{Дополнительные цели в правилах}
+
+\begin{frame}
+
+	\begin{center}
+		\Huge \insertsection
+	\end{center}
+
+\end{frame}
+
+
+\subsection{Реализация контекстно-зависимой грамматики}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Рассмотрим формальный язык \(a^nb^nc^n-\{\varepsilon \}\). Можно доказать, что данный язык \textbf{не является контекстно-свободным}.
+		\item Невозможно описать грамматику, порождающую данный язык, не используя дополнительные параметры. В качестве такого параметра возьмем счетчик букв \(a\), \(b\) и \(c\).
+		\item \texttt{s -{}-\textgreater~ ablock(Count),bblock(Count),cblock(Count).}
+		\item Блоки из нуля элементов выражаются пустыми строками. Остается определить переход от блока длины \(n+1\) к блоку длины \(n\). Но для этого необходимо задать дополнительные условия.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Дополнительные условия записываются в фигурных скобках.
+	
+	\texttt{\begin{itemize}
+			\item[] ablock(0) -{}-\textgreater~ [].
+			\item[] ablock(NewCount) -{}-\textgreater~ [a],ablock(Count), \{NewCount is Count + 1\}.
+			\item[] bblock(0) -{}-\textgreater~ [].
+			\item[] bblock(NewCount) -{}-\textgreater~ [b],bblock(Count), \{NewCount is Count + 1\}.
+			\item[] cblock(0) -{}-\textgreater~ [].
+			\item[] cblock(NewCount) -{}-\textgreater~ [c],cblock(Count), \{NewCount is Count + 1\}.
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Раскрыв <<синтаксический сахар>>, увидим, как выглядят правила Пролога, соответствующие правилам грамматики.
+	
+	\texttt{\begin{itemize}
+			\item[] ablock(NewCount,A,B) :- ’C’(A, a, C), \\ \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad
+			 								ablock(Count, C, B), \\ \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad
+										 	NewCount is Count + 1.
+	\end{itemize}}
+
+	Правило \texttt{'C'(A, a, C)} означает, что мы получим список \texttt{C} из списка \texttt{A}, убрав \texttt{a}.
+
+\end{frame}
+
+
+\subsection{Разделение правил и лексикона}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Под разделением правил и лексикона мы будем подразумевать удаление из правил грамматики всех упоминаний конкретных слов. Вместо этого, вся информация о доступных словах записывается в отдельную структуру.
+		\item Во-первых, такой подход позволяет более гибко использовать грамматику, так как правила описывают лишь \textit{общие синтаксические шаблоны}, что вполне логично и теоретически позволяет переиспользовать грамматику на разных лексиконах.
+		\item Во-вторых, реальные лексиконы могут включать десятки и сотни тысяч слов, для каждого из которых доступно большое количество информации, включая фонологические, морфологические и семантические свойства. Таким образом, мы описываем грамматику, как самостоятельную сущность, и затем используем хранимый отдельно лексикон для эффективного доступа к информации, в частности используя \textbf{First Argument Indexing}.
+	\end{itemize}	
+
+\end{frame}	
+
+
+\section{Выводы}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	
+	\begin{itemize}
+		\item Как мы увидели, DCG имеют множество достоинств и позволяют решать задачи, касающиеся анализа как формальных, так и естественных языков.
+		\item Решение реальных задач, как правило, требует введения большого числа дополнительных параметров, что делает правила очень громоздкими.
+		\item Кроме того, на недостатки самих DCG накладываются и недостатки Пролога, например зацикливание леворекурсивных правил.
+		\item При этом, DCG достаточно легко освоить и использовать для описания языков и правил. Язык Prolog предоставляет простые и удобные инструменты для описания DCG. Реализация простой грамматики, подобной той, что была рассмотрена выше, на императивном языке (например C++), потребует гораздо больше времени и строк кода. Это будет проще на функциональном языке (LISP или Haskell), однако их освоение с нуля требует больше времени, чем освоение языка Prolog.
+	\end{itemize}
+
+\end{frame}
