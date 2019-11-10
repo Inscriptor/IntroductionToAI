@@ -2406,3 +2406,549 @@
 	\end{itemize}
 
 \end{frame}
+
+
+% Дополнительные факты о термах и операторы
+
+\lecture{Advanced in terms}{termadv}
+
+
+\section{Сравнение термов}
+
+\begin{frame}
+
+	\begin{center}
+		\Huge \insertsection
+	\end{center}
+
+\end{frame}
+
+
+\subsection{Унификация и сравнение}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Язык Prolog, помимо операции унификации \textbf{=} предлагает также предикат~\textbf{==}, реализующий
+		сравнение термов.
+		\item Ответ на вопрос вида \texttt{term1 == term2.} будет равен \texttt{true} тогда и только тогда, когда термы идентичны друг другу.
+		\item Предикат \textbf{==} \textit{не присваивает значения переменным}.
+	\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Рассмотрим следующие примеры.
+	
+	\texttt{\begin{itemize}
+		\item[] term == term. (true)
+		\item[] term1 == term2. (false)
+		\item[] term == 'term'. (true)
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Теперь добавим переменных.
+	
+	\texttt{\begin{itemize}
+			\item<1->[] X == Y.
+			\item<2->[] X == a.
+			\item<3->[] X = a, X == a.
+			\item<4->[] X = Y, X == Y.
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+			\item Таким образом, можно сказать, что операции \textbf{=} и \textbf{==} существенно отличаются.
+			\item Тем не менее, можно говорить, что \textbf{==} является \textit{более строгим} ограничением, чем \textbf{=}.
+			\item Для любых двух термов \texttt{t1} и \texttt{t2}, из того, что выполняется \texttt{t1 == t2}, всегда следует, что \texttt{t1 = t2} также выполняется.
+	\end{itemize}
+
+\end{frame}
+
+
+\subsection{Отрицания операций}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Операция, обратная сравнению термов \textbf{==}, записывается как \textbf{\textbackslash==}.
+		\item Очевидно, что \texttt{t1 \textbackslash== t2} истинно тогда и только тогда, когда \texttt{t1 == t2} ложно.
+	\end{itemize}
+
+	\texttt{\begin{itemize}
+			\item[] term \textbackslash== term.
+			\item[] term1 \textbackslash== term2.
+			\item[] term \textbackslash== 'term'.
+			\item[] X \textbackslash== a.
+			\item[] X \textbackslash== Y.
+	\end{itemize}}
+
+\end{frame}
+
+
+\section{Термы с нестандартной нотацией}
+
+\begin{frame}
+
+	\begin{center}
+		\Huge \insertsection
+	\end{center}
+
+\end{frame}
+
+
+\subsection{Арифметические термы}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+
+	\begin{itemize}
+		\item Некоторые термы, которые, на первый взгляд, выглядят по-разному, Prolog интерпретирует как идентичные.
+		\item Например, как было показано в примерах выше, термы вида \texttt{term} и \texttt{'term'} идентичны.
+		\item В первую очередь, подобные термы нужны для удобства написания кода. Нотации, которые удобны для разбора интерпретатором, обычно не являются удобными для программиста.
+		\item Гораздо удобнее писать термы в удобной для себя нотации, чтобы затем интерпретатор разбирал их аналоги, записанные в нотации, удобной для него.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Хорошим примером специфических нотаций являются арифметические термы. Как уже было сказано ранее, все арифметические операции \(/, -, *, + \) и другие, являются функторами, а выражения вида \(2 + 3 \)~--- термами.
+	
+	\texttt{\begin{itemize}
+			\item 2+3 == +(2,3).
+			\item 2-3 == -(2,3).
+			\item 2*3 == *(2,3).
+			\item 3*(7+5) == *(3,+(7,5)).
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	То же касается и арифметических операций сравнения.
+	
+	\texttt{\begin{itemize}
+			\item (2 < 3) == <(2, 3).
+			\item (2 =< 3) == =<(2, 3).
+			\item (2 =:= 3) == =:=(2, 3).
+			\item (2 =\textbackslash= 3) == =\textbackslash=(2, 3).
+			\item (2 > 3) == >(2, 3).
+			\item (2 >= 3) == >=(2, 3).
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	В таблице ниже представлены все, известные нам, операции сравнения и их отрицания.
+	
+	\begin{table}
+		\centering
+		\begin{tabular}{ c l }
+			\multirow{2}{*}{=} & Предикат унификации. Выполняется, если может унифицировать \\ 
+			& свои аргументы и фейлится в противном случае. \\
+			\textbackslash= & Отрицание унификации. Выполняется в случае провала операции \textbf{=} и наборот. \\
+			\multirow{2}{*}{==} & Предикат идентичности. Выполняется, если его аргументы идентичны \\ & и фейлится в противном случае. \\
+			\textbackslash== & Отрицание идентичности. \\
+			\multirow{2}{*}{=:=} & Предикат арифметического равенства. Выполняется, \\ & если его аргументы числа и равны между собой. \\
+			=\textbackslash= & Предикат арифметического неравенства. \\
+		\end{tabular}
+	\end{table}
+
+\end{frame}
+
+
+\subsection{Списки как термы}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Списки также являются хорошим примером user friendly нотации термов.
+		\item В привычной записи, список задается путем перечисления его элементов через запятую и заключения их в квадратные скобки.
+		\item Пролог задает списки с помощью двух термов: \texttt{[]}, представляющего пустой список, и бинарного функтора \texttt{'.'} для построения непустых списков.
+		\item Пустой список это в точности терм \texttt{[]}. Длина такого списка равна 0.
+		\item Непустой список имеет вид \texttt{.(term,list)}, где \texttt{term}~--- произвольный терм, а \texttt{list}~--- произвольный список.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\texttt{\begin{itemize}
+			\item .(a,[]) == [a].
+			\item .(f(a,b),[]) == [f(a,b)].
+			\item .(a,.(b,[])) == [a,b].
+			\item .(a,.(b,.(f(x,y),[]))) == [a, b, f(x,y)].
+			\item .(.(.(a,[]),[]),[]) == [[[a]]].
+			\item .(a,.(.(b,.(c,[])),.(d.[]))) == [a,[b,c],d].
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{figure}
+		\includegraphics[scale=0.78]{listasterm}
+	\end{figure}
+
+\end{frame}
+
+
+\section{Исследование термов}
+
+
+\begin{frame}
+
+	\begin{center}
+		\Huge \insertsection
+	\end{center}
+
+\end{frame}
+
+
+\subsection{Типы термов}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{figure}
+		\includegraphics[scale=0.9]{termtypes}
+	\end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{table}
+		\centering
+		\begin{tabular}{ l l }
+			\rowcolor{LightGray} \texttt{atom/1} & Проверка, является ли аргумент атомарным \\
+			\rowcolor{LightGray} \texttt{integer/1} & Проверка, является ли аргумент целым числом \\
+			\rowcolor{LightGray} \texttt{float/1} & Является ли аргумент числом с плавающей запятой \\
+			\rowcolor{LightGray} \texttt{number/1} & Является ли аргумент числом (целым или вещественным) \\
+			\rowcolor{LightGray} \texttt{atomic/1} & Является ли аргумент константным \\
+			\rowcolor{LightGray} \texttt{var/1} & Является ли аргумент неозначенным \\
+			\rowcolor{LightGray} \texttt{nonvar/1} & Является ли аргумент означенным
+		\end{tabular}
+	\end{table}
+
+\end{frame}
+
+
+\subsection{Структура термов}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Пусть имеется некоторый терм \texttt{T}, и мы не знаем, как он выглядит, и какие аргументы имеет.
+	Какую информацию мы хотели бы знать, чтобы иметь возможность в дальнейшем использовать данный терм?
+	
+	\uncover<2->{\begin{enumerate}
+		\item Каков функтор терма \texttt{T}.
+		\item Какова арность терма \texttt{T}.
+		\item Каковы аргументы терма \texttt{T}.
+	\end{enumerate}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Предикат \texttt{functor/3} отвечает на первые два вопроса.
+		\item Принимая на вход составной терм в качестве первого аргумента, он присваивает его функтор и арность своим второму и третьему аргументу соответственно.
+	\end{itemize}
+	
+	Например:
+	
+	\texttt{\begin{itemize}
+		\item[] ?- functor(f(x,y), F, A).
+		\item[] F = f
+		\item[] A = 2
+		\item[] ?- functor(f, F, A).
+		\item[] F = f
+		\item[] A = 0
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	При этом, с помощью предиката \texttt{functor/3} мы можем не только находить функторы и арности термов, но и \textbf{конструировать термы с нужными функтором и арностью}.
+	
+	\texttt{\begin{itemize}
+			\item[] functor(T,f,3).
+			\item[] T = f(\_21882, \_21884, \_21886).
+	\end{itemize}}
+
+	\alert{Обратите внимание, что либо первый, либо второй и третий аргументы должны быть определены.}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	На третий вопрос о структуре неизвестного терма отвечают два предиката. Один из них~--- это предикат \texttt{arg/3}. Он принимает на вход целое число \(N\), составной терм \texttt{T} и возвращает \(N\)-й аргумент терма \texttt{T}. Также может применяться для присваивания значения \(N\)-му аргументу терма \texttt{T}.
+	
+	\texttt{\begin{itemize}
+		\item[] ?- arg(2, f(x,y), Second).
+		\item[] Second = y
+		\item[] ?- arg(2, f(x,Y), y).
+		\item[] Y = y
+		\item[] ?- arg(3, f(x,y), Third).
+		\item[] false
+	\end{itemize}}
+
+	\alert{Как можно видеть, нумерация аргументов терма начинается с 1.}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Вторым предикатом, позволяющим получить доступ к аргументам терма, является \texttt{'=..'/2}. Он принимает составной терм и возвращает список, где первым элементом идет функтор терма, а далее перечислены все его аргументы. Соответственно, задав вопрос \texttt{'=..'(f(x,y), S)}, получим ответ \texttt{S~=~[f,x,y]}. Данный предикат называется \alert{univ} и может использоваться как инфиксный оператор.
+	
+	\texttt{\begin{itemize}
+			\item[] ?- f(x, y, z) =.. Structure.
+			\item[] Structure = [f, x, y, z]
+			\item[] ?- f(X) =.. F.
+			\item[] F = [f, X]
+			\item[] ?- T =.. [g, x, y, z].
+			\item[] T = g(x, y, z)
+	\end{itemize}}
+
+\end{frame}
+
+
+\section{Операторы}
+\subsection{Свойства операторов}
+
+\begin{frame}
+
+	\begin{center}
+		\Huge \insertsection
+	\end{center}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\alert{Операторы}~--- это функторы бинарных или унарных термов, определенные специальным образом. Существует три типа операторов.
+	
+	\begin{enumerate}
+		\item \textit{Инфиксный оператор} записывается между своими аргументами.
+		\item \textit{Префиксный оператор} записывается перед своим аргументом.
+		\item \textit{Постфиксный оператор} записывается после своего аргумента.
+	\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Каждый оператор имеет \textit{приоритет}.
+		\item Например, приоритет операции сложения \(+\) \textbf{выше} приоритета операции умножения \(*\).
+		\item Аналогично, приоритет оператора \texttt{is} выше приоритета любой арифметической операции.
+		\item Приоритет оператора задается числом от 0 до 1200. Чем больше число, тем выше приоритет.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Стандартная нотация выражений в Прологе не имеет неоднозначностей. Например, в выражении \texttt{is(11,+(2,*(3,3)))} всегда понятно, в какой последовательности должны быть выполнены операции.
+		\item С другой стороны user friendly нотации могут быть неоднозначны. Выше был пример \texttt{2 =:= 3 == =:=(2,3)}. Операторы \texttt{=:=} и \texttt{==} обладают равными приоритетами, поэтому данное выражение не может быть оценено без постановки скобок.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Рассмотрим пример \texttt{X is 1 + 2 + 3}. В данном случае Prolog не выдаст ошибку, а разрешит выражение без постановки скобок.
+	
+	\texttt{\begin{itemize}
+			\item[] ?- 1 + 2 + 3 == +(1, +(2,3)).
+			\item[] false
+			\item[] ?- 1 + 2 + 3 == +(+(1,2), 3).
+			\item[] true
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Prolog имеет представление об \textit{ассоциативности} операторов.
+		\item Операция сложения левоассоциативна. Это означает, что выражение справа от оператора сложения должно иметь строго меньший приоритет.
+		\item Приоритет выражения равен приоритету его оператора или 0.
+		\item Операторы \texttt{=:=} и \texttt{==} не имеют ассоциативности.
+	\end{itemize}
+
+\end{frame}
+
+
+\subsection{Описание оператора}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Определение нового оператора в Prolog выглядит следующим образом:
+	
+	\texttt{\begin{itemize}
+			\item[] :- op(Precedence, Type, Name).
+	\end{itemize}}
+	
+	Соответственно, чтобы задать новый оператор, необходимо знать о нем три вещи:
+	
+	\begin{enumerate}
+		\item Тип (префиксный, инфиксный или постфиксный).
+		\item Приоритет.
+		\item Ассоциативность.
+	\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	В описании типа оператора \texttt{f} задает расположение функтора относительно аргументов, которые обозначаются буквами \texttt{x} или \texttt{y}.
+	
+	\begin{table}
+		\centering
+		\begin{tabular}{ l l }
+			\rowcolor{LightGray} infix & xfx, xfy, yfx \\
+			\rowcolor{LightGray} prefix & fx, fy \\
+			\rowcolor{LightGray} postfix & xf, yf \\
+		\end{tabular}
+	\end{table}
+
+	Буквой \texttt{x} обозначается аргумент, приоритет которого должен быть строго больше приоритета самого оператора, тогда как буквой \texttt{y} обозначается аргумент, приоритет которого может быть меньше либо равным приоритету оператора. Таким образом, оператор типа \texttt{yfx}~--- это инфиксный оператор, обладающий левой ассоциативностью, а оператор \texttt{xfx}~--- инфиксный оператор, не обладающий ассоциативностью.
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Типы и приоритеты некоторых встроенных операторов.
+	
+	\texttt{\begin{table}
+		\centering
+		\begin{tabular}{ l }
+			\rowcolor{LightGray} :- op(1200, xfx, [:-, -\textgreater]). \\
+			\rowcolor{LightGray} :- op(1200, fx, [:-, ?- ]). \\
+			\rowcolor{LightGray} :- op(1200, xfy, [;]). \\
+			\rowcolor{LightGray} :- op(1000, xfy, [',']). \\
+			\rowcolor{LightGray} :- op(700, xfx, [=, is, =.., ==, \textbackslash==, =:=, =\textbackslash=, <, >, =<, >=]). \\
+			\rowcolor{LightGray} :- op(500, yfx, [+, -]). \\
+			\rowcolor{LightGray} :- op(500, fx, [+, -]). \\
+			\rowcolor{LightGray} :- op(300, xfx, [mod]). \\
+			\rowcolor{LightGray} :- op(200, xfy, [\textasciicircum]). \\
+		\end{tabular}
+	\end{table}}
+
+\end{frame}
