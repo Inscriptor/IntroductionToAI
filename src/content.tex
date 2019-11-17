@@ -2952,3 +2952,210 @@
 	\end{table}}
 
 \end{frame}
+
+
+
+% Внутренняя база данных и агрегирование решений
+
+\lecture{Database manipulations and collecting solutions}{dbnag}
+
+
+\section{Операции с внутренней базой данных}
+\subsection{Assert}
+
+\begin{frame}
+
+\begin{center}
+	\Huge \insertsection
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	
+	Стандарт языка Prolog предлагает операции для управления динамическими базами знаний, которые могут изменяться в процессе
+	исполнения запросов. Основные операции реализуют следующие предикаты:
+	
+	\texttt{\begin{itemize}
+		\item assert/1
+		\item asserta/1
+		\item assertz/1
+		\item retract/1
+		\item retractall/1
+		\item abolish/1
+	\end{itemize}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Допустим, что мы имеем пустую базу знаний, не содержащую ни фактов, ни правил.
+		\item В этом случае запрос \texttt{listing.} вернет ответ \texttt{\textbf{true}} и больше ничего.
+		\item Выполнив запрос вида \texttt{assert(f(x,y)).} получим ответ \texttt{\textbf{true}}. \textbf{Предикат \texttt{assert} \underline{всегда} завершается успешно.}
+		\item Теперь запрос \texttt{listing(f/2).} вернет примерно следующее:
+		\texttt{\begin{itemize}
+				\item[] :- dynamic f/2.
+				\item[] f(x, y).
+		\end{itemize}}
+	\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Во-первых, предикат \texttt{f/2} был объявлен динамическим.
+		\item Во-вторых, теперь база знаний содержит факт \texttt{f(x,y).}, соответственно запрос \texttt{f(x,y).} вернет \texttt{true}.
+		\item Аналогично можно поступать и с правилами: \texttt{assert(f(X,y) :- (X > 5)).} Здесь мы добавили правило, что \texttt{f(X,y)} выполняется для любых X > 5. Теперь запрос \texttt{f(10,y).} вернет \texttt{true}, а запрос \texttt{f(1,y)}~--- \texttt{false}.
+		\item Факт или правило будут добавлены в базу знаний столько раз, сколько раз для них будет вызвана операция вставки.
+	\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Для более гибкого управления динамической базой знаний используются предикаты \texttt{asserta/1} и \texttt{assertz/1}.
+		\item \texttt{asserta/1} добавит выражение в начало динамической базы.
+		\item \texttt{assertz/1} добавит выражение в конец.
+		\item Предикат \texttt{assert/1} на настоящий момент объявлен устаревшим (deprecated), и его использование не рекомендуется. В SWI Prolog предикат \texttt{assert} работает аналогично \texttt{assertz}.
+	\end{itemize}
+
+\end{frame}
+
+
+
+\subsection{Retract}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Для удаления динамических фактов и правил используются предикаты \texttt{retract/1} и \texttt{retractall/1}.
+		\item Предикат \texttt{retract/1} удалит первое правило или факт, с которыми сможет унифицировать переданный ему терм.
+		\item В случае, если терм нельзя унифицировать с чем-либо в базе знаний, он вернет \texttt{false}.
+		\item Предикат \texttt{retractall/1} удалит \textbf{все} вхождения правил или фактов, с которыми сможет унифицировать свой аргумент.
+		\item Аргументами предикатов \texttt{retract} и \texttt{retractall} могут выступать как термы, так и правила.
+		\item В случае, когда в качестве аргумента передан терм \texttt{T} будут удалены как факты вида \texttt{F.}, так и правила вида \texttt{F :- \ldots} такие, что \texttt{T = F}.
+	\end{itemize}
+
+\end{frame}
+
+
+\subsection{Примеры}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\only<1>{Добавим с динамическую базу несколько фактов и одно правило.
+		
+		\texttt{\begin{itemize}
+			\item[] assertz(f(x,y)).
+			\item[] assertz(f(x,y)).
+			\item[] assertz(f(a,b)).
+			\item[] assertz((f(X,y) :- g(X,a,b)).
+	\end{itemize}}}
+
+	\only<2>{База будет выглядеть примерно так, если задать вопрос \texttt{listing(f/2)}.
+		
+		\texttt{\begin{itemize}
+				\item[] :- dynamic f/2.
+				\item[] f(x,y).
+				\item[] f(x,y).
+				\item[] f(a,b).
+				\item[] f(X,y) :- g(X,a,b).
+	\end{itemize}}}
+
+	\only<3>{Теперь попробуем удалить одно вхождение факта \texttt{f(x,y)}.
+		
+		\texttt{\begin{itemize}
+				\item[] retract(f(x,y)).
+				\item[]
+				\item[] f(x,y).
+				\item[] f(a,b).
+				\item[] f(X,y) :- g(X,a,b).
+	\end{itemize}}}
+		
+
+	\only<4>{Из оставшегося удалим все факты и правила, такие, что их head унифицируется с термом \texttt{f(X,y)}.
+		
+		\texttt{\begin{itemize}
+				\item[] retractall(f(X,y)).
+				\item[]
+				\item[] f(a,b).
+	\end{itemize}}}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Рассмотрим еще один пример~--- вычисление и кеширование таблицы умножения.
+	
+	\texttt{\begin{itemize}
+			\item[] multab(Scale) :- member(X,Scale),\\
+			\quad\quad\quad\quad\quad\quad\quad\quad member(Y,Scale),\\
+			\quad\quad\quad\quad\quad\quad\quad\quad Prod is X * Y,\\
+			\quad\quad\quad\quad\quad\quad\quad\quad assertz(mult(X,Y,Prod)),\\
+			\quad\quad\quad\quad\quad\quad\quad\quad fail.
+	\end{itemize}}
+
+\end{frame}
+
+
+\subsection{Abolish}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	\begin{itemize}
+		\item Предикаты \texttt{assert(a/z), retract} и \texttt{retractall} работают только с \alert{динамическими фактами и правилами}, т.е. такими, у которых head объявлен динамическим.
+		\item Если в базе нет упоминания о предикате \texttt{p}, то при добавлении утверждений с его участием через \texttt{assert} он будет объявлен динамическим.
+		\item В противном случае предикат \texttt{p} должен быть объявлен динамическим вручную.
+		\item Попытка работать со статическими предикатами при помощи данных операций приведет к ошибке.
+		\item Однако, предикат \texttt{abolish/1} дает возможность удалять как статические, так и динамические выражения.
+		\item В стандарте \texttt{abolish/1} описан, как предикат, обладающий таким же функционалом, как и \texttt{retractall/1}, однако в SWI Prolog его функционал был расширен, т.к. существование двух предикатов в одинаковым функционалом было признано нецелесообразным.
+	\end{itemize}
+
+\end{frame}
+
+
+\section{Агрегирование решений}
+\subsection{findall}
+
+\begin{frame}
+
+	\begin{center}
+		\Huge \insertsection
+	\end{center}
+
+\end{frame}
