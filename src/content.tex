@@ -3150,12 +3150,180 @@
 
 
 \section{Агрегирование решений}
-\subsection{findall}
+\subsection{Findall}
 
 \begin{frame}
 
 	\begin{center}
 		\Huge \insertsection
 	\end{center}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	
+	В случае, когда ответ на запрос предполагает несколько решений, мы можем получить их последовательно поиском с возвратом, либо сначала собрать все возможные решения и получить их в виде списка.
+	Следующие три предиката реализуют операции агрегирования решений.
+	
+	\texttt{\begin{itemize}
+			\item findall/3
+			\item bagof/3
+			\item setof/3
+	\end{itemize}}
+	
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Запрос вида
+	
+	\texttt{\begin{itemize}
+			\item[] findall(Buff, Goal, Answers).
+			\item[]
+	\end{itemize}}
+
+	возвращает список всех возможных значений переменной \texttt{Buff}, удовлетворяющих цели \texttt{Goal}. Чаще всего \texttt{Buff}~--- это просто переменная.
+	В случае, когда не удалось найти требуемых значений для \texttt{Buff}, \texttt{findall} возвратит \alert{пустой список}.
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Например, мы хотим получить все результаты умножения девятки из таблицы умножения.
+	
+	\texttt{\begin{itemize}
+			\item[] findall([X,Y],mult(9,X,Y),Res).
+			\item[]
+			\item[] Res = [[1,9],[2,18],[3,27],[4,36],[5,45],[6,54],[7,63],[8,72],[9,81]].
+	\end{itemize}}
+	
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Параллельно, мы можем задать требуемую структуру элементам результирующего списка.
+	
+	\texttt{\begin{itemize}
+			\item[] findall(nineProds(X,Y),mult(9,X,Y),Res).
+			\item[]
+			\item[] Res = [nineProds(1,9), nineProds(2,18), nineProds(3,27), nineProds(4,36), nineProds(5,45), nineProds(6,54), nineProds(7,63), nineProds(8,72), nineProds(9,81)].
+	\end{itemize}}
+
+\end{frame}
+
+
+\subsection{Bagof}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Предикат \texttt{bagof/3} позволяет получить результаты в более упорядоченном виде. Предикат \texttt{findall} возвращает простой мешок решений, в котором собрано все ответы,
+	удовлетворяющие заданной цели. При этом, последовательность, в которой расположены эти ответы, зависит только от обхода дерева поиска решений.
+	
+	Запрос вида
+	
+	\texttt{\begin{itemize}
+			\item[] findall(X,mult(Z,X,\_),Res).
+			\item[]
+	\end{itemize}}
+	
+	возвратит что-то похожее на \texttt{[1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 
+		6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
+	
+	Возможно, это именно то, что нужно, но, очевидно, не всегда такое нас устроит.
+	
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Рассмотрим запрос:
+	
+	\texttt{\begin{itemize}
+			\item[] bagof(X,D\textasciicircum mult(Z,X,D),Res).
+			\item[]
+	\end{itemize}}
+	
+	\texttt{bagof} выдаст решения, сгруппированные по Z.
+	
+	\texttt{\begin{itemize}
+			\item[] Z = 1,
+			\item[] Res = [1, 2, 3, 4, 5, 6, 7, 8, 9] ;
+			\item[] Z = 2,
+			\item[] Res = [1, 2, 3, 4, 5, 6, 7, 8, 9] ;
+			\item[] Z = 3,
+			\item[] Res = [1, 2, 3, 4, 5, 6, 7, 8, 9] ;
+			\item[] \ldots
+	\end{itemize}}
+	
+\end{frame}
+
+
+\subsection{Setof}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Еще один предикат для агрегирования решений~--- это \texttt{setof/3}. В целом, он работает почти также, как и \texttt{bagof}, за исключением того, что
+	\texttt{setof} сортирует агрегированные списки (если может) и удаляет повторяющиеся элементы, т.е. возвращает \textit{упорядоченные множества решений}.
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	
+	Например, запрос
+	
+	\texttt{\begin{itemize}
+			\item[] setof(X,D\textasciicircum Z\textasciicircum mult(Z,X,D),Res).
+			\item[]
+	\end{itemize}}
+
+	возвратит ответ \texttt{Res = [1, 2, 3, 4, 5, 6, 7, 8, 9]}, в то время, как \texttt{bagof} вернул бы то же самое, что и \texttt{findall}~--- неупорядоченный список всех
+	найденных ответов, включая повторы.
+
+\end{frame}
+
+
+
+\section{Выводы}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	
+	\begin{itemize}
+		\item Динамическая база знаний позволяет кешировать найденные решения для повторного использования и управлять фактами и правилами в процессе выполнения запросов.
+		\item При этом, не рекомендуется перегружать программу большим количеством динамических операций, т.к. это сильно затрудняет отладку и читаемость кода.
+		\item Операции агрегации решений \texttt{findall, bagof} и \texttt{setof} в совокупности предлагают достаточно возможностей для управления возвращаемыми результатами.
+		\item В большинстве случаев будет достаточно \texttt{findall}.
+	\end{itemize}
 
 \end{frame}
