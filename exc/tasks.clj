@@ -1,21 +1,21 @@
 ;;#01
-{inc (-> :Int : Int)}
+{inc (-> :Int :Int)}
 (inc 10)
 ;; :Int
 
 ;;#02
-{inc (-> :Int : Int),
+{inc (-> :Int :Int),
  x :Str}
 (inc x)
 ;;ERROR
 
 ;;#03
-{inc (-> :Int : Int)}
+{inc (-> :Int :Int)}
 (inc x)
 ;; :Int
 
 ;;#04
-{inc (-> :Int : Int), >0 (-> :Int :Bool)}
+{inc (-> :Int :Int), >0 (-> :Int :Bool)}
 (inc (>0 10))
 ;;ERROR
 
@@ -45,14 +45,14 @@
 ;; :Int
 
 ;;#10
-{inc (-> :Int : Int)}
+{inc (-> :Int :Int)}
 (lambda x (inc x))
 ;; (-> :Int : Int)
 
 ;;#11
 {}
 ((lambda x x) 10)
-;; (-> :Int : Int)
+;; :Int
 
 ;;#12
 {x :Str, 
