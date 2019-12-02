@@ -3327,3 +3327,256 @@
 	\end{itemize}
 
 \end{frame}
+
+
+% Внутренняя база данных и агрегирование решений
+
+\lecture{Database manipulations and collecting solutions}{pathsearch}
+
+
+\section{Источники}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	
+	\begin{enumerate}
+		\item Introduction to the A* Algorithm. (https://www.redblobgames.com/pathfinding/a-star/introduction.html)
+		\item[]
+		\item Введение в алгоритм A* (https://habr.com/ru/post/331192/)
+	\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	
+	\begin{enumerate}
+		\item Поиск в ширину.
+		\item[]
+		\item Поиск в равномерной стоимостью (алгоритм Дейкстры).
+		\item[]
+		\item Алгоритм \(A^*\).
+	\end{enumerate}
+
+\end{frame}
+
+\section{Поиск в ширину}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	
+	Поиск в ширину выполняет исследование равномерно во всех направлениях.
+	
+	\begin{enumerate}
+		\item Выбираем и удаляем точку из границы.
+		\item Помечаем точку как посещённую, чтобы знать, что не нужно обрабатывать её повторно.
+		\item Расширяем границу, глядя на её соседей. Всех соседей, которых мы ещё не видели, добавляем к границе.
+	\end{enumerate}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+	\frametitle{\insertsection}
+	
+	Код на Python.
+	
+	\begin{python}
+	frontier = Queue()
+	frontier.put(start)
+	visited = {}
+	visited[start] = True
+	
+	while not frontier.empty():
+	  current = frontier.get()
+	  for next in graph.neighbors(current):
+	    if next not in visited:
+		  frontier.put(next)
+		  visited[next] = True
+	\end{python}
+	
+\end{frame}
+
+
+\begin{frame}[fragile]
+
+	\frametitle{\insertsection}
+	
+	Если мы хотим найти путь, то для каждой вершины надо запомнить, откуда мы в нее пришли.
+	
+	\begin{python}
+	frontier = Queue()
+	frontier.put(start)
+	came_from = {}
+	came_from[start] = None
+	
+	while not frontier.empty():
+	  current = frontier.get()
+	  for next in graph.neighbors(current):
+	    if next not in came_from:
+	      frontier.put(next)
+	      came_from[next] = current
+	\end{python}
+
+\end{frame}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	
+	\begin{figure}
+		\includegraphics[scale=0.68]{findpath}
+	\end{figure}
+
+\end{frame}
+
+\section{Ранний выход}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	
+	\begin{figure}
+		\includegraphics[scale=0.68]{earlyexit}
+	\end{figure}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+
+\frametitle{\insertsection}
+
+	Мы должны просто прекратить расширять границу, как только нашли цель.
+	
+	\begin{python}
+	frontier = Queue()
+	frontier.put(start)
+	came_from = {}
+	came_from[start] = None
+			
+	while not frontier.empty():
+	  current = frontier.get()
+			
+	  if current == goal: 
+	    break           
+			
+	  for next in graph.neighbors(current):
+	    if next not in came_from:
+	      frontier.put(next)
+	      came_from[next] = current
+	\end{python}
+
+\end{frame}
+
+
+\section{Поиск с равномерной стоимостью}
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	
+	\begin{figure}
+		\includegraphics[scale=0.68]{lowercost}
+	\end{figure}
+
+\end{frame}
+
+\begin{frame}[fragile,shrink=7]
+
+\frametitle{\insertsection}
+
+Здесь нужна очередь с приоритетами и функция стоимости.
+
+\begin{python}
+frontier = PriorityQueue()
+frontier.put(start, 0)
+came_from = {}
+cost_so_far = {}
+came_from[start] = None
+cost_so_far[start] = 0
+
+while not frontier.empty():
+  current = frontier.get()
+
+  if current == goal:
+  break
+
+  for next in graph.neighbors(current):
+    new_cost = cost_so_far[current] + graph.cost(current, next)
+    if next not in cost_so_far or new_cost < cost_so_far[next]:
+      cost_so_far[next] = new_cost
+      priority = new_cost
+      frontier.put(next, priority)
+      came_from[next] = current
+\end{python}
+
+\end{frame}
+
+
+\section{Алгоритм A*}
+
+
+\begin{frame}[fragile,shrink=7]
+
+\frametitle{\insertsection}
+
+\begin{python}
+frontier = PriorityQueue()
+frontier.put(start, 0)
+came_from = {}
+cost_so_far = {}
+came_from[start] = None
+cost_so_far[start] = 0
+
+while not frontier.empty():
+  current = frontier.get()
+
+  if current == goal:
+    break
+
+  for next in graph.neighbors(current):
+    new_cost = cost_so_far[current] + graph.cost(current, next)
+    if next not in cost_so_far or new_cost < cost_so_far[next]:
+      cost_so_far[next] = new_cost
+      priority = new_cost + heuristic(goal, next)
+      frontier.put(next, priority)
+      came_from[next] = current
+\end{python}
+
+\end{frame}
+
+
+\begin{frame}
+
+	\frametitle{\insertsection}
+	
+	\begin{figure}
+		\includegraphics[scale=0.35]{pathfindcmp}
+	\end{figure}
+
+\end{frame}
+
+\section{Дополнительно}
+	
+	
+\begin{frame}
+
+	\frametitle{\insertsection}
+	
+	\begin{enumerate}
+		\item Реализация алгоритма A* (https://www.redblobgames.com/pathfinding/a-star/implementation.html)
+		\item[]
+		\item Перевод на хабре (https://habr.com/en/post/331220/)
+		\item[]
+		\item Оптимизации поиска путей (https://www.redblobgames.com/pathfinding/grids/algorithms.html)
+		\item[]
+		\item Цикл статей по поиску путей и практическому применению теории игр (http://theory.stanford.edu/~amitp/GameProgramming/)
+	\end{enumerate}
+	
+\end{frame}
