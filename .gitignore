@@ -1,11 +1,11 @@
 # misc
-src/*.aux
-src/*.log
-src/*.nav
-src/*.out
+*.aux
+*.log
+*.nav
+*.out
 src/*.pdf
-src/*.snm
-src/*.toc
-src/*.synctex.gz
+*.snm
+*.toc
+*.synctex.gz
 # additional materilas
 /add
