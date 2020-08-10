@@ -9,3 +9,4 @@ src/*.pdf
 *.synctex.gz
 # additional materilas
 /add
+/code
