@@ -1,0 +1,72 @@
+% \usecolortheme{orchid}
+\graphicspath{{images/}}
+\usefonttheme[onlymath]{serif}
+
+\definecolor{Gray}{gray}{0.65}
+\definecolor{LightGray}{gray}{0.90}
+
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+% Enable colored hyperlinks
+\hypersetup{
+	colorlinks=true,
+	linkcolor = .,
+	anchorcolor = {black},
+	citecolor = {green},
+	filecolor = {cyan},
+	menucolor = {red},
+	runcolor = {cyan},
+	urlcolor = {magenta}
+}
+
+% The following three lines are for crossmarks & checkmarks
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
+% Numbered captions of tables, pictures, etc.
+\setbeamertemplate{caption}[numbered]
+
+%\usepackage[superscript,biblabel]{cite}
+\usepackage{algorithm2e}
+\renewcommand{\thealgocf}{}
+
+% Bibliography settings
+\usepackage[style=ieee]{biblatex}
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+\addbibresource{references.bib}
+
+% Glossary entries
+% \usepackage[acronym]{glossaries}
+% \newacronym{ML}{ML}{machine learning}
+% \newacronym{HRI}{HRI}{human-robot interactions}
+% \newacronym{RNN}{RNN}{Recurrent Neural Network}
+% \newacronym{LSTM}{LSTM}{Long Short-Term Memory}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\theoremstyle{definition}
+
+\newcommand{\empy}[1]{{\color{darkorange}\emph{#1}}}
+\newcommand{\empr}[1]{{\color{cardinalred}\emph{#1}}}
+\newcommand{\examplebox}[2]{
+	\begin{tcolorbox}[colframe=darkcardinal,colback=boxgray,title=#1]
+		#2
+\end{tcolorbox}}
+
+\usetheme{Stanford}
+\input{./style_files_stanford/my_beamer_defs.sty}
+\logo{\includegraphics[height=0.4in]{./style/Logo_en_red_white_back.png}}
+
+% commands to relax beamer and subfig conflicts
+% see here: https://tex.stackexchange.com/questions/426088/texlive-pretest-2018-beamer-and-subfig-collide
+\makeatletter
+\let\@@magyar@captionfix\relax
+\makeatother
+
+\title[Short Title]{Full Title Of Presentation}
+%\subtitle{Subtitle Of Presentation}
+
+\beamertemplatenavigationsymbolsempty

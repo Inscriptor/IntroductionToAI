@@ -3,6 +3,10 @@
 *.log
 *.nav
 *.out
+*.bbl
+*.bcf
+*.blg
+*.xml
 src/*.pdf
 *.snm
 *.toc
