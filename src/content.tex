@@ -1429,3 +1429,417 @@
 	
 \end{frame}
 
+
+
+% Lesson 8. Definite Clause Grammars. Continue.
+\lecture{DCG}{dcgc}
+
+\section{Overview}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	Goals of the lesson
+	\begin{itemize}
+		\item To examine extra arguments and extra tests offered by DCG notation.
+		\item To discuss the limitations of DCGs.
+	\end{itemize}
+\end{frame}
+
+
+\section{Extra arguments}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Recall the grammar we built on the previous class:
+	
+	\begin{table}
+		\centering
+		\begin{tabular}{ l }
+			\rowcolor{LightGray} S \(\rightarrow \) nounPhrase verbPhrase \\
+			\rowcolor{LightGray} nounPhrase \(\rightarrow \) article noun \\
+			\rowcolor{LightGray} verbPhrase \(\rightarrow \) verbExpr nounPhrase \\
+			\rowcolor{LightGray} verbExpr \(\rightarrow \) modalVerb verb prep \\
+			\rowcolor{LightGray} article \(\rightarrow \) a \\
+			\rowcolor{LightGray} article \(\rightarrow \) the \\
+			\rowcolor{LightGray} noun \(\rightarrow \) cat \\
+			\rowcolor{LightGray} noun \(\rightarrow \) king \\
+			\rowcolor{LightGray} modalVerb \(\rightarrow \) may \\
+			\rowcolor{LightGray} verb \(\rightarrow \) look \\
+			\rowcolor{LightGray} prep \(\rightarrow \) at
+		\end{tabular}
+	\end{table}
+
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	As we know this grammar produces sentences like:
+	
+	\begin{itemize}
+		\item A cat may look at a king
+		\item A cat may look at the king
+		\item A king may look at a cat
+		\item A king may look at the cat
+		\item The cat may look at a king
+		\item The king may look at a cat
+	\end{itemize}
+
+	And so on, around 20 sentences in total.
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Suppose we wanted to add pronouns, and deal with sentences like:
+	
+	\begin{itemize}
+		\item He may look at her
+		\item A cat may look at him
+		\item A king may look at her
+		\item She may look at a cat
+	\end{itemize}
+
+	There are subjective and objective pronouns.
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Hmm, nice, let us add rules for pronouns:
+	
+	\texttt{\begin{table}
+			\centering
+			\begin{tabular}{l}
+				pro -{}-\textgreater ["he"].\\
+				pro -{}-\textgreater ["him"].\\
+				pro -{}-\textgreater ["she"].\\
+				pro -{}-\textgreater ["her"].\\
+				nounPhrase -{}-\textgreater pro.
+			\end{tabular}
+	\end{table}}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Up to a point this grammar works. It recognizes and generates all sentences we wanted it to, but it will also accept a lot of sentences that are clearly wrong.
+	
+	\begin{itemize}
+		\item Him may look at a cat
+		\item He may look at she
+		\item The king may look at she
+		\item The cat may look at she
+	\end{itemize}
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+
+	Definite Clause Grammar is just a language model. It possesses no knowledge about English phrases. 
+	
+	That is, accepting a sentence \textit{''A cat may look at she``} it doesn’t know that “she” and “he” are subject pronouns and cannot be used in object position.
+	
+	Moreover, accepting \textit{''Him may look at a cat``} it doesn't know either that “her” and “him” are object pronouns and cannot be used in subject position.
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	\begin{table}
+		\centering
+		\begin{tabular}{| c | c | c | c | c |}
+			\hline
+			\multirow{2}{*}{\textbf{PERSONS}} & \multicolumn{2}{|c|}{\textbf{SINGULAR}} & \multicolumn{2}{|c|}{\textbf{PLURAL}} \\ \cline{2-5}
+			& \textbf{Subjective Case} & \textbf{Objective Case} & \textbf{Subjective Case} & \textbf{Objective Case} \\
+			\hline
+			\textbf{\(1^{st}\) person} & I & me & we & us \\
+			\hline
+			\textbf{\(2^{nd}\) person} & you & you & you & you \\
+			\hline
+			\textbf{\(3^{rd}\) person} & he,she,it & him,her,it & they & them \\
+			\hline
+		\end{tabular}
+	\end{table}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Now it is obvious that we have to explicitly state which pronoun can and which cannot occur in a subject position.
+	
+	\texttt{\begin{table}
+			\centering
+			\begin{tabular}{l}
+				sentense -{}-\textgreater ~subjNP, verbPhrase.\\
+				subjNP -{}-\textgreater ~article, noun.\\
+				subjNP -{}-\textgreater ~spr.\\
+				objNP -{}-\textgreater ~article, noun.\\
+				objNP -{}-\textgreater ~opr.\\
+				verbPhrase -{}-\textgreater ~verbExpr, objNP.\\
+				spr -{}-\textgreater ~~["he"]. \\
+				spr -{}-\textgreater ~["she"]. \\
+				opr -{}-\textgreater ~["him"]. \\
+				opr -{}-\textgreater ~["her"]. \\
+			\end{tabular}
+	\end{table}}
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	It works now. This solution, however, cannot be considered a good one.
+	
+	A small addition to the lexicon has led to quite a big change in the grammar. In particular, we’ve doubled the number of noun phrase rules.
+	
+	If we wanted to make more changes, let's say it to further extend the lexicon, things would get even worse.
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	What we truly need is some elegant programming technique, and here is where the extra arguments come into play.
+	
+	Consider the following program:
+	
+	\texttt{\begin{table}
+			\centering
+			\begin{tabular}{l l}
+				sentense -{}-\textgreater~ nounPhrase(subj),verbPhrase. & article -{}-\textgreater~ ["a"]. \\
+				nounPhrase(\_) -{}-\textgreater~ article, noun. & article -{}-\textgreater~ ["the"]. \\
+				nounPhrase(P) -{}-\textgreater~ pro(P). & noun -{}-\textgreater~ ["cat"]. \\
+				verbPhrase -{}-\textgreater~ verbExpr, nounPhrase(obj). & noun -{}-\textgreater~ ["king"]. \\
+				verbExpr -{}-\textgreater~ modalVerb, verb, prep. & pro(subj) -{}-\textgreater~ ["he"]. \\
+				modalVerb -{}-\textgreater~ ["may"]. & pro(subj) -{}-\textgreater~ ["she"]. \\
+				verb -{}-\textgreater~ ["look"]. & pro(obj) -{}-\textgreater~ ["him"]. \\
+				prep -{}-\textgreater~ ["at"]. & pro(obj) --> ["her"].
+			\end{tabular}
+	\end{table}}
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	We already know (or at least I hope we do) that any DCG rule is just a syntactic sugar for an ordinary Prolog rule. So, what \texttt{sentence -{}-\textgreater~ nounPhrase(subj)} translates into?
+	
+	\texttt{\begin{table}
+			\centering
+			\begin{tabular}{l}
+				 ~sentense -{}-\textgreater~ nounPhrase,verbPhrase.\\
+				 ~sentense(A,B) :- nounPhrase(A,C),verbPhrase(C,B).\\ \\
+				\hline \hline
+				\\
+				\uncover<2->{
+					sentense -{}-\textgreater~ nounPhrase(subj),verbPhrase.\\
+					~sentense(A,B) :- nounPhrase(subj,A,C),verbPhrase(C,B).
+				}
+			\end{tabular}
+	\end{table}}
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	One final remark: don’t be misled by this simplicity of our example. Extra arguments can be used to cope with some complex syntactic problems. 
+	
+	DCGs are no longer the state-of-art grammar development tools they once were, but they’re not toys either. 
+	
+	Once you know about writing DCGs with extra arguments, you can write some fairly sophisticated grammars.
+\end{frame}
+
+
+\section{Making parsers}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	So far, our programs have been able to answer \textit{''yes``} or \textit{''no``} whether the input sentence correct according to the grammar, and produce grammatical output.
+	
+	That is, they all were \textit{recognizers}.
+	
+	But what if we would like them to not only tell us which sentences are grammatical, but also to analyze their structures. For example we would like to see the parse trees.
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Considering the tree:
+	
+	\begin{figure}
+		\includegraphics[scale=0.65]{gramtree}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	We could make a following DCG:
+
+	\texttt{\begin{tabular}{l}
+			sentense(s(NP,VP)) -{}-\textgreater~ nounPhrase(NP), verbPhrase(VP).\\
+			nounPhrase(np(A,N)) -{}-\textgreater~ article(A), noun(N).\\
+			verbPhrase(vp(VE,NP)) -{}-\textgreater~ verbExpr(VE), nounPhrase(NP).\\
+			verbExpr(ve(MV,V,P)) -{}-\textgreater~ modalVerb(MV), verb(V), prep(P).\\
+			article(art("a")) -{}-\textgreater~ ["a"].\\
+			article(art("the")) -{}-\textgreater~ ["the"].\\
+			noun(n("cat")) -{}-\textgreater~ ["cat"].\\
+			noun(n("king")) -{}-\textgreater~ ["king"].\\
+			modalVerb(mv("may")) -{}-\textgreater~ ["may"].\\
+			verb(v("look")) -{}-\textgreater~ ["look"].\\
+			prep(p("at")) -{}-\textgreater~ ["at"].\\
+	\end{tabular}}
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Corresponding to our proverb we could have the following result:
+	\texttt{\begin{table}
+			\centering
+			\begin{tabular}{m{14cm}}
+				?- sentence(T, [''a``, ''cat``, ''may``, ''look``, ''at``, ''a``, ''king''], []). \\ \\
+				T = s(np(art(''a``), n(''cat``)), vp(ve(mv(''may``), v(''look``), p(''at``)), np(art(''a``), n(''king``)))).\\
+			\end{tabular}
+	\end{table}}
+
+
+	It may not look nice, but it contains all the information from the picture. Depending on the task, we can design the output to our liking.
+	
+\end{frame}
+
+
+
+\section{Extra goals}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	When haven't used DCG notations we introduced a special predicate \texttt{lexicon/2} to define our alphabet.
+	
+	\only<1>{\texttt{\begin{tabular}{l}
+			sentense(S,D) :- nounPhrase(S,VP), verbPhrase(VP,D).\\
+			nounPhrase(NP,D) :- article(NP,N), noun(N,D).\\
+			verbPhrase(VP,D) :- verbExpr(VP,VE), nounPhrase(VE,D).\\
+			verbExpr(VE,D) :- modalVerb(VE,MV), verb(MV,V), prep(V,D).\\
+			article([A|D],D) :- lexicon(''article'',A).\\
+			noun([N|D],D) :- lexicon(''noun'',N).\\
+			modalVerb([MV|D],D) :- lexicon(''modal verb'',MV).\\
+			verb([V|D],D) :- lexicon(''verb'',V).\\
+			prep([P|D],D) :- lexicon(''prep'',P).\\
+	\end{tabular}}}
+	
+	\only<2->{\texttt{\begin{tabular}{l}
+				lexicon(''article``,''a``).\\
+				lexicon(''article``,''the``).\\
+				lexicon(''noun``,''cat``).\\
+				lexicon(''noun``,''king``).\\
+				lexicon(''verb``,''look``).\\
+				lexicon(''modal verb``,''may``).\\
+				lexicon(''prep``,''at``).
+	\end{tabular}}}
+
+	\only<3->{Why haven't we done the same thing in DCG notation then? \textbf{Is it possible?}}
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Why, of cause it is!
+	
+	\texttt{\begin{tabular}{l}
+			sentense -{}-\textgreater~nounPhrase, verbPhrase.\\
+			nounPhrase -{}-\textgreater~article, noun.\\
+			verbPhrase -{}-\textgreater~verbExpr, nounPhrase.\\
+			verbExpr -{}-\textgreater~modalVerb, verb, prep.\\ \\
+			article -{}-\textgreater~\{lexicon("article",A)\},[A].\\
+			noun -{}-\textgreater~\{lexicon("noun",Noun)\},[Noun].\\
+			modalVerb -{}-\textgreater~\{lexicon("modal verb",Mv)\},[Mv].\\
+			verb -{}-\textgreater~\{lexicon("verb",Verb)\},[Verb].\\
+			prep -{}-\textgreater~\{lexicon("prep",Prep)\},[Prep].\\
+	\end{tabular}}
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	The extra goals can be written anywhere on the right side of a DCG rule, but \textbf{must stand between curly brackets}. When Prolog encounters such curly brackets while translating a DCG into its internal representation, it just takes the extra goals specified between the curly brackets over into the translation.
+	
+	The extra arguments give us the tools for coping with any computable language whatsoever, not just context free languages.
+	
+	For example, the formal language \(a^nb^nc^n-\{\varepsilon \}\) is not a context free language. It could be proved by contradiction that you will not succeed in writing a context free grammar that generates precisely these strings.
+		
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	What we need to make a DCG for \(a^nb^nc^n-\{\varepsilon \}\) is a symbol counter. Any correct string has to have a block of \(a\)s followed by a block of \(b\)s followed by a block of \(c\)s, and all blocks are to have the same length.
+	
+	\texttt{\begin{tabular}{l}
+			as(0) -{}-\textgreater~ [].\\
+			as(Len) -{}-\textgreater~ [a],as(Prev), \{Len is Prev + 1\}.\\
+			bs(0) -{}-\textgreater~ [].\\
+			bs(Len) -{}-\textgreater~ [b],bs(Prev), \{Len is Prev + 1\}.\\
+			cs(0) -{}-\textgreater~ [].\\
+			cs(Len) -{}-\textgreater~ [c],cs(Prev), \{Len is Prev + 1\}.\\
+	\end{tabular}}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	The second rule for the non-terminal \texttt{as} would be translated as follows:
+	
+	\texttt{\begin{table}\centering\begin{tabular}{l}
+			as(Len,A,B) :- ’C’(A, a, C), \\ \quad\quad\quad\quad\quad\quad\quad\quad
+			as(Prev, C, B), \\ \quad\quad\quad\quad\quad\quad\quad\quad
+			Len is Prev + 1.
+	\end{tabular}\end{table}}
+	
+\end{frame}
+
+
+\section{Conclusions}
+
+\begin{frame}[shrink=7]
+	\frametitle{\insertsection}
+	
+	For the most part, DCGs are presented as a simple tool for developing context free grammars. But as we saw it was possible to extend beyond that. DCGs are programming language in their own right. They are Turing complete.
+	
+	But they have rather significant drawbacks. They are tendent to loop when goal ordering is wrong. If we need to use lots of extra arguments, they become a rather clumsy mechanism. Many of this problems, however, DCG notation inherits from the Prolog itself. It is well-known that all top-down parsers loop on left-recursive grammars.
+	
+	DCGs as we saw them, are a nice notation for context free grammars enhanced with some features that comes with a free parser/recognizer, are probably best viewed as a convenient tool for testing new grammatical ideas, or for implementing reasonably complex grammars for particular applications.
+	
+	With a conventional programming language (such as C++ or Java) it simply wouldn’t be possible to reach this stage so soon. Things would be easier in functional languages (such as LISP, SML, or Haskell), but even so, it is doubtful whether beginners could do so much so early.
+\end{frame}
+
+
