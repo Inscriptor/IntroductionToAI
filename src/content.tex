@@ -299,23 +299,6 @@
 	}
 \end{frame}
 
-\section{Exercise}
-
-\begin{frame}
-	\frametitle{\insertsection}
-	\textbf{Write the following statements in Prolog}
-	
-	\texttt{\begin{tabular}{l}
-			1. Any giraffe is a horse that was uppercutted by Chuck Norris \\
-			2. Mia and Marcellus are married \\
-			3. Zed is dead \\
-			4. If something is on fire then it smokes \\
-			5. Marsellus kills everyone who gives Mia a footmassage \\
-			6. Mother of a mother is a grandmother \\
-			7. Mia loves everyone who is a good dancer
-	\end{tabular}}
-\end{frame}
-
 
 % Lesson 2. Term matching.
 \lecture{Match}{match}
@@ -506,21 +489,6 @@
 	\end{figure}
 \end{frame}
 
-\section{Exercise}
-
-\begin{frame}
-	\frametitle{\insertsection}
-	Which of the following pairs of terms match? Where relevant, give the variable instantiations that lead to successful matching.
-	\texttt{\begin{enumerate}
-		\item a = a, 'String' = string, x = Y.
-		\item f(X, Y, z) = f(x, a, b).
-		\item g(x, y, f(Z)) = g(Z, Y, f(x)).
-		\item polygon(v(x1,y1), v(x1,Y), v(X,Y)) = polygon(v(X,Z), v(x1,y2), v(x3,y3)).
-		\item polygon(v(x1,y3), v(x2,Y), v(X,Y)) = polygon(v(X,Y), v(Z,y3), v(x1,y3)).
-		\item move(state(Pos,onTheFloor,Pos,H), push(Pos,Pos1), state(Pos1,onTheFloor,Pos1,H)) = move(state(x,onTheFloor,Pos,no), push(x,y), state(Pos1,onTheFloor,Pos1,no)).
-	\end{enumerate}}
-\end{frame}
-
 
 % Lesson 3. Recursion in Prolog
 \lecture{Recursion}{recursion}
@@ -708,7 +676,7 @@
 	
 	Unfortunately, this representation of natural numbers suffers from several significant disadvantages:
 	\begin{itemize}
-		\item First, this is not really the way we want to write and read numbers. We would like to use a more familiar notation~--- such as 1, 2 and 3—to represent natural numbers.
+		\item First, this is not really the way we want to write and read numbers. We would like to use a more familiar notation~--- such as 1, 2 and 3~--- to represent natural numbers.
 		\item With some practice, we may get used to the successor notation. However, a more fundamental problem remains: This representation takes space that is directly proportional to the magnitude of the numbers we need to represent. Thus, the space requirement grows exponentially with the length of any number's decimal representation. Therefore, reasoning about larger numbers is infeasible with this representation.
 		\item More complex relations such as multiplication and exponentiation are hard to define in such a way that they work in all directions and retain good termination properties.
 		\item To extend this representation to integers, we also need a way to represent negative numbers.
@@ -720,7 +688,7 @@
 \begin{frame}
 	\frametitle{\insertsection}
 	\justifying
-	Therefore, successor notation~—-- albeit useful to illustrate different ways in which we could represent our data~—-- is not how we typically reason about numbers in Prolog.
+	Therefore, successor notation~--- albeit useful to illustrate different ways in which we could represent our data~--- is not how we typically reason about numbers in Prolog.
 \end{frame}
 
 
@@ -786,7 +754,7 @@
 			\rowcolor{LightGray}\( x < y \) & \texttt{X < Y.}  \\
 			\rowcolor{LightGray}\( x\leqslant y \)  & \texttt{X =< Y.}   \\
 			\rowcolor{LightGray}\( x = y \)  & \texttt{X =:= Y.}  \\
-			\rowcolor{LightGray}\( x\neq y \)  & \texttt{X =\= Y.}  \\
+			\rowcolor{LightGray}\( x\neq y \)  & \texttt{X =\textbackslash = Y.}  \\
 			\rowcolor{LightGray}\( x\geqslant y \)  & \texttt{X >= Y.}  \\
 			\rowcolor{LightGray}\( x > y \)  & \texttt{X > Y.} \\
 		\end{tabular}
@@ -1045,7 +1013,355 @@
 \end{frame}
 
 
-% Lesson 7 Definite Clause Grammars
+% Lesson 7. Dynamic database
+\lecture{Database}{db}
+
+\section{Overview}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	Goals of the lesson
+	\begin{itemize}
+		\item Define a predicate which causes one or more clauses to be added to or deleted from the Prolog database.
+		\item Define predicates to create and manipulate a database of related facts within the Prolog database.
+		\item To discuss inbuilt predicates that let us collect all solutions to a problem into a single list.
+	\end{itemize}
+\end{frame}
+
+\section{Database}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	The normal way of placing clauses in the Prolog database is to consult or reconsult one or more files.
+	
+	A consult directive causes all the clauses in the file to be loaded into the knowledge base to add to those already there. A reconsult directive behaves in a similar way to consult, with one crucial	difference. If any clause in the reconsulted file is for the same predicate as a clause	already in the database (i.e. their heads have the same functor and arity), all clauses
+	for that predicate in the database are first deleted.
+	
+	Clauses placed into the knowledge base normally stay there until added to or deleted by a subsequent consult or reconsult directive, or until the user exits from the Prolog system when all clauses are automatically deleted. For most purposes this is entirely sufficient.
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	However Prolog also has built-in predicates for adding clauses to and deleting clauses from the database which can be useful for more advanced programming in the language. Like many other 'advanced' features, they need to be used with care.
+	
+	As usual, these built-in predicates can be used either in the body of a rule or in a directive entered at the system prompt. As the user's program and the Prolog database are equivalent, using them in the body of a clause is equivalent to modifying the user's program while it is being used.
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	SWI-Prolog offers predicates to manage knowledge base during the execution of Prolog programs.
+	\texttt{\begin{itemize}
+			\item assert/1
+			\item asserta/1
+			\item assertz/1
+			\item retract/1
+			\item retractall/1
+			\item abolish/1
+	\end{itemize}}
+
+	There are others, of cause. You can become acquainted with them here: \href{https://www.swi-prolog.org/pldoc/man?section=db}{https://www.swi-prolog.org/pldoc/man?section=db}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	If any predicate is to be modified using \texttt{assertz}, \texttt{retract} etc., it should be specified as \textbf{dynamic} by a directive in the user's program. 
+	As an example, for predicate \texttt{f} with arity 2, the line
+	
+	\texttt{?- dynamic(f/3).}
+	
+	should be added at or near the start of the program and certainly before the first clause that mentions the \texttt{f} predicate.
+	
+	If the dynamic directive is left out, attempts to modify the database are likely to produce error messages such as \textit{''Predicate Protected``} or even \textit{''Predicate Not Defined``}.
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Suppose we start with an empty database. So if we give the command:
+	
+	\texttt{?- listing.}
+	
+	we simply get a \texttt{true.}; the listing is empty, except for the garbage it always prints for no sane reason. Suppose we now give this command:
+	
+	\texttt{?- assert(f(x,y)).}
+	
+	It succeeds (\texttt{assert} commands \textbf{always succeed}). But what is important is the side-effect it has on the database. If we now give the command:
+	
+	\texttt{?- listing.}
+
+	we get the listing:
+	
+	\texttt{:- dynamic f/2.\\f(x,y).}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	We can do the same thing with rules as well. Rules must be enclosed in an additional pair of parentheses.
+	
+	\texttt{?- assert((f(X,y) :- X > 5)).}
+	
+	As you can see, the clause used for the argument should be written without a terminating full stop.
+	
+	Now we may pose query like:
+	
+	\texttt{?- f(10, y).}
+	
+	and get an answer \texttt{true.}
+	
+	\textbf{Note that clauses will occur in the knowledge base as many times as they were asserted.}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Two main predicates available for deleting clauses from the database are:
+	
+	\texttt{\begin{itemize}
+			\item retract(?Clause)
+			\item retractall(?Clause)
+	\end{itemize}}
+	
+\end{frame}
+
+
+\begin{frame}[shrink=7]
+	\frametitle{\insertsection}
+	
+	The predicate \texttt{retract/1} takes a single argument, which must be a clause, i.e. a fact or a rule. It causes the first clause in the database that matches (i.e. unifies with) \texttt{Clause} to be deleted. If the following clauses are in the database
+	
+	\texttt{dog(jim).\\dog(fido).\\dog(X).}
+	
+	the query
+	
+	\texttt{?- retract(dog(fido)).}
+	
+	will delete the second clause and the further query
+	
+	\texttt{?-retract(dog(X)).}
+	
+	will delete the \texttt{dog(jim)} clause, which is the first one of the remaining two clauses to unify with the query. This will leave the \texttt{dog(X)} clause in the database. Although unusual, this is a valid Prolog fact which signifies 'everything is a dog'.
+	
+\end{frame}
+
+
+\begin{frame}[shrink=7]
+	\frametitle{\insertsection}
+	
+	The predicate \texttt{retractall/1} takes a single argument which must be the head of a clause. It causes every clause in the database whose head matches \texttt{Clause} to be
+	deleted. The \texttt{retractall} goal always succeeds even if no clauses are deleted. Some examples are:
+	
+	\texttt{?- retractall(f(\_,\_)).}
+	
+	which deletes all the clauses for the \texttt{f/2} predicate, and
+	
+	\texttt{?- retractall(parent(john,Y)).}
+	
+	which deletes all clauses for the \texttt{parent/2} predicate which have the atom \texttt{john} as their first argument. Note that the directive
+	
+	\texttt{?- retractall(f).}
+	
+	only removes the clauses for predicate \texttt{f/0}. To delete all the clauses for predicate \texttt{f/2} it is necessary to use
+	
+	\texttt{?- retractall(f(\_,\_)).}
+\end{frame}
+
+
+\section{Database: Examples}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	\only<1>{Let us take an empty database and add some facts and one rule to it:
+		
+		\texttt{\begin{itemize}
+				\item[] ?- assertz(f(x,y)).
+				\item[] ?- assertz(f(x,y)).
+				\item[] ?- assertz(f(a,b)).
+				\item[] ?- assertz((f(X,y) :- g(X,a,b)).
+	\end{itemize}}}
+	
+	\only<2>{Now if we pose a query \texttt{?- listing(f/2).} we will get
+		
+		\texttt{\begin{itemize}
+				\item[] :- dynamic f/2.
+				\item[] f(x,y).
+				\item[] f(x,y).
+				\item[] f(a,b).
+				\item[] f(X,y) :- g(X,a,b).
+	\end{itemize}}}
+	
+	\only<3>{Let us now delete one occurrence of the fact \texttt{f(x,y)}.
+		
+		\texttt{\begin{itemize}
+				\item[] retract(f(x,y)).
+				\item[]
+				\item[] f(x,y).
+				\item[] f(a,b).
+				\item[] f(X,y) :- g(X,a,b).
+	\end{itemize}}}
+	
+	
+	\only<4>{From what is left in database we delete all facts and rules such that their head is matched with \texttt{f(X,y)}.
+		
+		\texttt{\begin{itemize}
+				\item[] retractall(f(X,y)).
+				\item[]
+				\item[] f(a,b).
+	\end{itemize}}}
+
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Consider another example:
+	
+	\texttt{\begin{tabular}{l l}
+			multab(From, To) :- & member(X,Scale),\\
+			~ & member(Y,Scale),\\
+			~ & P is X * Y,\\
+			~ & assertz(p(X,Y,P)),\\
+			~ & fail.
+	\end{tabular}}
+\end{frame}
+
+
+\section{Database: Conclusions}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	\begin{itemize}
+		\item You have to define predicate as dynamic in order to use it with \texttt{asserta, assertz, retract} and \texttt{retractall}.
+		\item If predicate \texttt{p} is not yet defined in the database it will be defined as dynamic when first used in \texttt{assert} operation.
+		\item Predicate \texttt{abolish/1} removes all clauses of a predicate from the database. All predicate attributes (dynamic, multifile, index, etc.) are reset to their defaults. According to the ISO standard, \texttt{abolish/1} can only be applied to dynamic procedures. This is odd, as for dealing with dynamic procedures there is already \texttt{retract/1} and \texttt{retractall/1}. The \texttt{abolish/1} predicate was introduced in DEC-10 Prolog precisely for dealing with static procedures. In SWI-Prolog, \texttt{abolish/1} works on static procedures, unless the Prolog flag iso is set to true. \textbf{It is advised to use \texttt{retractall/1} for erasing all clauses of a dynamic predicate.}
+	\end{itemize}
+\end{frame}
+
+
+\section{Aggregation}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	There may be more than one solution to a query. Prolog interpreter, however, returns solutions one by one. Sometimes we would like to have all the solutions to a query at once, and we would like them handed to us on a pretty usable form. Prolog has 3 built-in predicates that do precisely this:
+	\texttt{\begin{itemize}
+			\item findall/3
+			\item bagof/3
+			\item setof/3
+	\end{itemize}}
+	
+	Basically these predicates collect all the solutions to a query and put them in a list, but	there are important differences between them.
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	The query
+	
+	\texttt{?- findall(Buffer, Goal, Response).}
+	
+	produces a list \texttt{Response} of all the objects of a form of \texttt{Buffer} that satisfy the goal \texttt{Goal}. Often \texttt{Buffer} is simply a variable, in which case the query can be read as: \textbf{Give me a list containing all the instantiations of Object which satisfy Goal.}
+	
+	If there are no solutions satisfying the \texttt{Goal} the \texttt{findall} predicate returns an empty list as response.
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Suppose we want to get a subset of our little multiplication table we made:
+	
+	\texttt{\begin{tabular}{m{13cm}}
+			?- findall([X,Y], p(9, X, Y), Response).\\
+			Response = [[1, 9], [2, 18], [3, 27], [4, 36], [5, 45], [6, 54], [7, 63], [8|...], [...|...]].\\\\
+			?- findall(9 * X = Y, p(9, X, Y), Response).\\
+			Response = [9*1=9, 9*2=18, 9*3=27, 9*4=36, 9*5=45, 9*6=54, 9*7=63, ... * ... = 72, ... = ...].\\
+	\end{tabular}}
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	The \texttt{bagof/3} predicate is more finegrained than \texttt{findall}, it gives us the opportunity to extract the information we want in a more structured way. Moreover, \texttt{bagof} can also do the same job as \texttt{findall}, with the help of a special piece of syntax.
+	\only<1>{\texttt{\begin{table}\centering\begin{tabular}{|l | l|}
+			\hline
+			\multirow{5}{4cm}{?- bagof(pair(X,Y), p(X,Y,Z), R).} & Z = 1, R = [pair(1, 1)] ;\\
+			& Z = 2, R = [pair(1, 2), pair(2, 1)] ;\\
+			& Z = 3, R = [pair(1, 3), pair(3, 1)] ;\\
+			& Z = 4, R = [pair(1, 4), pair(2, 2), pair(4, 1)] ;\\
+			& Z = 5, R = [pair(1, 5), pair(5, 1)] ;\\
+			\hline
+	\end{tabular}\end{table}}}
+	\only<2->{
+		\texttt{\begin{table}\centering\begin{tabular}{|l | l|}
+				\hline
+				\multirow{4}{*}{?- bagof(X, p(X, Y, Z), R).} & Y = Z, Z = 1, R = [1] ;\\
+				& Y = 1, Z = 2, R = [2] ;\\
+				& Y = 1, Z = 3, R = [3] ;\\
+				& Y = 1, Z = 4, R = [4] ;\\
+				\hline
+				\multirow{6}{*}{?- bagof(X, Y\textasciicircum p(X, Y, Z), R).} & Z = 1, R = [1] ;\\
+				& Z = 2, R = [1, 2] ;\\
+				& Z = 3, R = [1, 3] ;\\
+				& Z = 4, R = [1, 2, 4] ;\\
+				& Z = 5, R = [1, 5] ;\\
+				& Z = 6, R = [1, 2, 3, 6] ;\\
+				\hline
+		\end{tabular}\end{table}}
+	}
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	The \texttt{setof/3} predicate is basically the same as \texttt{bagof}, but with one useful difference: the lists it contains are ordered and contain no redundancies. \textbf{That is, each item appears in the list only once.}
+	
+	\texttt{\begin{tabular}{|l | m{7cm}|}
+			\hline
+			?- findall(Y, p(X, Y, Z), R). & R =  [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9].\\
+			\hline
+			?- setof(Y, X\textasciicircum Z\textasciicircum p(X, Y, Z), R). & R = [1, 2, 3, 4, 5, 6, 7, 8, 9].\\
+			\hline
+	\end{tabular}}
+	
+\end{frame}
+
+
+\section{Conclusions}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	\begin{itemize}
+		\item Dynamic database allows to cache solutions and manipulate facts and rules in runtime.
+		\item Typically it is a bad idea to overuse the database manipulation predicates as it hampers considerably program tracing and debug. Nevertheless, there are scenarios where storing data outside the Prolog stacks is a good option.
+		\item Typically, first consider representing data processed by your program as terms passed around as predicate arguments. If you need to reason over multiple solutions to a goal, consider \texttt{findall/3}, and related predicates.
+	\end{itemize}
+	
+\end{frame}
+
+
+% Lesson 8. Definite Clause Grammars
 \lecture{DCG}{dcg}
 
 
@@ -1431,7 +1747,7 @@
 
 
 
-% Lesson 8. Definite Clause Grammars. Continue.
+% Lesson 9. Definite Clause Grammars. Continue.
 \lecture{DCG}{dcgc}
 
 \section{Overview}
