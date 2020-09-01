@@ -4,7 +4,9 @@
 % Lesson 1. Introduction, main terms and simple examples
 \lecture{Intro}{intro}
 
-\section{Tools}
+\section{Course work and grading policy}
+
+\section{Tools and resources}
 
 \begin{frame}
 	\frametitle{\insertsection}
@@ -13,9 +15,34 @@
 		\item You can download SWI-Prolog at this page: \href{https://www.swi-prolog.org/download/stable}{https://www.swi-prolog.org/download/stable}
 		\item Complete manual is available at \href{https://www.swi-prolog.org/pldoc/doc_for?object=manual}{https://www.swi-prolog.org/pldoc/doc\_for?object=manual}
 		\item Online tool SWISH: \href{https://swish.swi-prolog.org/}{https://swish.swi-prolog.org/}
-		\item Eclipse PDT~--- Prolog Development Tool
+		\item Eclipse PDT~--- Prolog Development Tool: \href{https://sewiki.iai.uni-bonn.de/research/pdt/docs/start}{https://sewiki.iai.uni-bonn.de/research/pdt/docs/start}
+		\item Slides will be published weekly in the Google Classroom and on github: \href{https://github.com/Inscriptor/IntroductionToAI}{https://github.com/Inscriptor/IntroductionToAI}
 	\end{itemize}
 \end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	\textbf{100\% = 375 points}
+	
+	\begin{itemize}
+		\item 6 Assignments: 5\% + 6\% + 2 x 12\% + 2 x 20\%: 75\%
+		\item Exam: 40\%
+		\begin{itemize}
+			\item 5 = 150 pts, 4 = 100 pts, 3 = 50 pts, 2 = 0 pts
+		\end{itemize}
+		\item Participation: 15\%
+		\item Tests: 5\%
+		\item Late day policy
+		\begin{itemize}
+			\item 14 free late days; afterwards 10\% off per day late
+			\item Assigments not accepted after 1 week late per assignment
+		\end{itemize}
+	\end{itemize}
+	
+\end{frame}
+
 
 \section{Overview}
 
@@ -31,10 +58,12 @@
 	\end{itemize}
 \end{frame}
 
+
 \section{Basic constructs}
 
 \begin{frame}
 	\frametitle{\insertsection}
+	
 	Basic Prolog constructs
 	\begin{tabular}{p{0.4\textwidth}p{.6\textwidth}}
 		\begin{itemize}
@@ -46,11 +75,13 @@
 			\item[] \textbf{Knowledge Base} (also called database) is a collection of facts and rules. Prolog programs are knowledge
 			bases, collections of facts and rules which describe some collection of relationships that we find interesting. We use knowledge base
 			by posing queries.
-		\end{itemize}
+		\end{itemize} \\
+		\multicolumn{2}{p{\textwidth}}{
+				\textbf{Queries}. The Prolog interpreter responds to queries about the facts and rules represented in its database. In making a query you are asking Prolog whether it can prove that your query is true. If so, it answers "Yes" and displays any \textit{variable bindings} that it made in coming up with the answer. If it fails to prove the query true, it answers "No".
+		}
 	\end{tabular}
-	\begin{itemize}
-		\item \textbf{Queries}. The Prolog interpreter responds to queries about the facts and rules represented in its database. In making a query you are asking Prolog whether it can prove that your query is true. If so, it answers "Yes" and displays any \textit{variable bindings} that it made in coming up with the answer. If it fails to prove the query true, it answers "No".
-	\end{itemize}
+	
+
 \end{frame}
 
 \section{Simple Examples}
@@ -238,6 +269,7 @@
 			\item Any \textbf{variable} is a term.
 			\item Any sequence of a form \texttt{f(a1, a2, \ldots)} where \texttt{f} is an atom, and
 			\texttt{a1, a2,}~\ldots are terms, is a term.
+			\item Conjunction and disjunction of terms are terms: \texttt{(T1, T2), (T1; T2)}.
 			\item There are no other terms.
 	\end{itemize}
 	\begin{example}
@@ -899,6 +931,7 @@
 		\item Any non-empty list can be thought of as consisting of the head and the tail. The head is simply the first item in the list; the tail is everything else. SWI Prolog has a special inbuilt operator | which can be used to decompose a list into its head and tail.
 		\item The empty list contains no internal structure.
 	\end{itemize}
+
 \end{frame}
 
 
