@@ -1107,7 +1107,7 @@
 	If any predicate is to be modified using \texttt{assertz}, \texttt{retract} etc., it should be specified as \textbf{dynamic} by a directive in the user's program. 
 	As an example, for predicate \texttt{f} with arity 2, the line
 	
-	\texttt{?- dynamic(f/3).}
+	\texttt{:- dynamic(f/3).}
 	
 	should be added at or near the start of the program and certainly before the first clause that mentions the \texttt{f} predicate.
 	
@@ -1262,7 +1262,7 @@
 	Consider another example:
 	
 	\texttt{\begin{tabular}{l l}
-			multab(From, To) :- & member(X,Scale),\\
+			multab(Scale) :- & member(X,Scale),\\
 			~ & member(Y,Scale),\\
 			~ & P is X * Y,\\
 			~ & assertz(p(X,Y,P)),\\
@@ -1394,7 +1394,258 @@
 \end{frame}
 
 
-% Lesson 8. Definite Clause Grammars
+
+% Lesson 8. Files
+\lecture{Files}{files}
+
+\section{Overview}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	Goals of the lesson
+	\begin{itemize}
+		\item How predicate definitions can be spread across different files
+		\item How to write results to files and how to read input from files
+	\end{itemize}
+\end{frame}
+
+
+\section{Splitting programs over modules}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	
+	By now, you have seen and you had to write lots of programs that use miscellaneous predicates you described. What you probably did each time you needed one of them was
+	to go back to the definition and copy it over into the file where you wanted to use it. And maybe, you started thinking that it would be a lot nicer if you could define them somewhere once and for all and then just access that definition whenever you needed it.
+	
+	That sounds like a pretty sensible thing to ask for and, of course, Prolog offers ways of doing it.
+		
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	If you want Prolog to consult an extra code you have to place a list of files at the beginning of your program like this:
+	
+	\only<1>{\texttt{
+		\begin{tabular}{l}
+			:- [sourceCode1, sourceCode2, \ldots].
+		\end{tabular}}
+
+		Doing so you are telling Prolog to consult the files in the square brackets before reading in the rest of the file. 
+		
+		On encountering something of such the form, Prolog just goes
+		ahead and consults the files without checking whether the file really needs to be consulted. If the predicate definitions provided by one of the files are already
+		available, because it already was consulted once, Prolog still consults it again, overwriting the definitions in the database.
+	}
+	\only<2->{
+		\texttt{
+			\begin{tabular}{l}
+				:- ensure\_loaded([sourceCode1, sourceCode2, \ldots]).
+			\end{tabular}
+		}
+	
+	
+		The inbuilt predicate \texttt{ensure\_loaded/1} behaves more clever in this case and it is what you should usually use to load predicate definitions given in some other file into your program.
+		
+		On encountering the following directive \texttt{:- ensure\_loaded([sourceCode1, sourceCode2]).} Prolog checks whether the files \texttt{sourceCode1.pl} and \texttt{sourceCode2.pl} have already been loaded. If not, Prolog loads them. If they already are loaded in, Prolog checks whether something has changed since last loading them and if that is the case, Prolog loads them, if not, it doesn’t do anything and goes on processing the program.
+	}
+	
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Imagine that you are writing a program that needs two predicates \texttt{f/1} and \texttt{g/2}. You described \texttt{f/1} and \texttt{g/2} in the files
+	\texttt{source1.pl} and \texttt{source2.pl} respectively. Now you can load this two files as we did before by putting
+	
+	\texttt{
+		\begin{tabular}{l}
+			:- ensure\_loaded([source1, source2]).
+		\end{tabular}
+	}
+
+	at the top of your next program. Now, imagine that each of them depends on predicate \texttt{some\_helper/2}, which is defined both in \texttt{source1.pl} and \texttt{source2.pl}.
+	
+	Unfortunately, there seem to be problems this time. You get a message that looks something like:
+	
+	\texttt{
+		\begin{tabular}{l}
+			\alert{The procedure some\_helper/2 is being redefined} \\
+			\alert{Do you really want to redefine it? (y, n, p, or ?)}
+		\end{tabular}
+	}
+		
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	So what has happened? 
+	
+	Both files are defining the predicate \texttt{some\_helper/2}. And what’s worse, you can’t be sure that the predicate is defined in the same way in both files. So, you can’t just say <<yes, override>>, since \texttt{f/1} depends on the definition of \texttt{some\_helper/2} given in file \texttt{source1.pl} and \texttt{g/2} depends on the definition given in file \texttt{source2.pl}.
+	
+	Furthermore, note that you are not really interested in the definition of \texttt{some\_helper/2} at all. You don’t want to use it. The predicates that you are interested in, that you want to use are \texttt{f/1} and \texttt{g/2}. They need definitions of \texttt{some\_helper/2}, but the rest of your program doesn’t.
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Instead of consulting the whole file we can turn it into a \textit{module}.
+	
+	Modules allow you to encapsulate predicate definitions. You are allowed to decide what is public and what is private in the module. 
+	
+	Public predicates are callable from outside of the module, while private are not. You are not allowed to call private predicates from somewhere except of the module itself, but there will be no conflicts if multiple modules internally define the same predicate.
+	
+	In our example \texttt{some\_helper/2} is a good candidate for becoming a private predicate.
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{insertsection}
+	
+	You can turn a source file into a module by putting a declaration of the following form at the top of that file:
+	
+	\texttt{\begin{tabular}{l}
+			:- module(Name, ListOfPublicPredicates).
+	\end{tabular}}
+	
+	This declaration specifies the name of the module and the list of predicates that should be declared public. That is, the list of predicates that you want to export.
+	
+	By putting
+	
+	\texttt{\begin{tabular}{l}
+			:- module(source1, [f/1]). or \\
+			:- module(source2, [g/2]).
+	\end{tabular}}
+	
+	at the top of the corresponding file we define our modules. Predicate \texttt{some\_helper/2} is now hidden, so there is no clash when loading both modules at the same time.	 
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Modules are loaded with the built-in predicate \texttt{use\_module/1}. Putting
+	
+	\texttt{\begin{tabular}{l}
+			:- use\_module(source1).\\
+			:- use\_module(source2).
+	\end{tabular}}
+	
+	at the top of a source file will import all public predicates from both modules.
+	
+	Moreover, if you don't need all public predicates of a module, you can use the binary predicate \texttt{use\_module/2}, which takes the list of predicates you want to import from a module.
+	
+	\texttt{\begin{tabular}{l}
+			:- use\_module(source1, [f/1]).\\
+			:- use\_module(source2, [g/2]).
+	\end{tabular}}
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Many of the very common predicates are actually predefined in most Prolog implementations in one way or another. 
+	
+	If you have been using SWI Prolog, for example, you will probably have noticed that things like append and member are built in. That’s a specialty of SWI, however. Other Prolog implementations, like Sicstus for example, don’t have them built in. But they usually come with a set of libraries, i.e. modules defining common predicates. 
+	
+	These libraries can be loaded using the normal commands for importing modules. When specifying the name of the library that you want to use, you have to tell Prolog that this module is a library, so that Prolog knows where to look for it (namely, not in the directory where your other code is, but at the place where Prolog keeps its libraries).
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Putting
+	
+	\texttt{\begin{tabular}{l}
+			:- use\_module(library(libname)).
+	\end{tabular}}
+	
+	at the top of your file tells Prolog to load a library having a name \texttt{libname}.
+	
+	Note, however, that the way libraries are organized and the inventory of predicates provided by libraries are by no means standardized across different Prolog implementations. In fact, the library systems may differ quite a bit.
+	
+	So, if you want your program to run with different Prolog implementations, it might be easier and faster to define your own library modules (using the techniques that we saw in the last section) than to try to work around all the incompatibilities between the library systems of different Prolog implementations.	
+	
+\end{frame}
+
+
+\section{Writing to and reading from files}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Now, we know how to load program code from files, and we want to look at reading an input data from files and outputting results to files.
+	
+	Before we can perform any actions on a file, we have to open it and associate a stream with it. Streams have names, that we can use to specify which stream to write or read from.
+	Prolog assigns these names to streams, and all you need to do is bind them to a variables and then pass these variables around.
+	
+	The built-in predicate \texttt{open/3} opens a files and assign a stream with it.
+	
+	\texttt{\begin{tabular}{l}
+			open(+FileName, +Mode, -Stream)
+	\end{tabular}}
+
+	The first argument is the name of the file, and in the last argument, Prolog returns the name this it assigns to the stream. Mode is one of \textit{read}, \textit{write} or \textit{append}.
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	When you are finished working with file, you should close it again. This is done by the built-in predicate \texttt{close/1}. It takes the name of the stream associated with file.
+	
+	Working-with-file session usually has the following structure:
+	
+	\texttt{\begin{tabular}{l}
+			open(myfile, write, Stream).\\
+			\ldots \\
+			write something to the file \\
+			\ldots \\
+			close(Stream).
+	\end{tabular}}
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	The predicates for writing to and reading from a stream are almost the same as the ones we already used. We have \texttt{write}, \texttt{writeln}, \texttt{read}, \texttt{nl}, etc.
+	The only thing that is different is that we always give the stream that we want to write to or read from as the first argument.
+	
+	\texttt{\begin{tabular}{l l}
+			readFile :- & open('in.txt',read,In),\\
+			~ & \textbackslash+ at\_end\_of\_stream(In),\\
+			~ & read(In,R),\\
+			~ & writeln(R),\\
+			~ & close(In).\\
+			writeFile :- & open('../out.txt',write,Out),\\
+			~ & write(Out, 'Some string.'),\\
+			~ & write(Out, 'Skin(Smith,Black).'),\\
+			~ & close(Out).
+	\end{tabular}}
+	
+\end{frame}
+
+
+% Lesson 9. Definite Clause Grammars
 \lecture{DCG}{dcg}
 
 
@@ -1543,12 +1794,11 @@
 	\frametitle{\insertsection}
 	
 	Then add two predicates that are handy when you start a program. Predicate \texttt{recognize} asks user to input string and starts recognizer, \texttt{generate} starts language generator that returns all phrases that are grammatically correct according to grammar.
-	
 	\texttt{\begin{itemize}
 			\item[] recognize :- write(''Enter the phrase: ''),\\
 			\quad\quad\quad\quad\quad\quad\quad current\_input(In),\\
 			\quad\quad\quad\quad\quad\quad\quad read\_string(In, ''\textbackslash n'', ''\textbackslash r\textbackslash t'', \_, Phrase),\\
-			\quad\quad\quad\quad\quad\quad\quad split\_string(Phrase,~''~'',~"''',~ListPhrase),\\
+			\quad\quad\quad\quad\quad\quad\quad split\_string(Phrase,~"~",~"",~ListPhrase),\\
 			\quad\quad\quad\quad\quad\quad\quad sentense(ListPhrase),!.
 			\item[] generate :- sentense(Phrase),\\
 			\quad\quad\quad\quad\quad\quad\quad atomics\_to\_string(Phrase,'~',String),\\
@@ -1926,7 +2176,6 @@
 	\frametitle{\insertsection}
 	
 	Now it is obvious that we have to explicitly state which pronoun can and which cannot occur in a subject position.
-	
 	\texttt{\begin{table}
 			\centering
 			\begin{tabular}{l}
@@ -1963,8 +2212,7 @@
 	
 	What we truly need is some elegant programming technique, and here is where the extra arguments come into play.
 	
-	Consider the following program:
-	
+	\textbf{Consider the following program:}
 	\texttt{\begin{table}
 			\centering
 			\begin{tabular}{l l}
@@ -1986,7 +2234,6 @@
 	\frametitle{\insertsection}
 	
 	We already know (or at least I hope we do) that any DCG rule is just a syntactic sugar for an ordinary Prolog rule. So, what \texttt{sentence -{}-\textgreater~ nounPhrase(subj)} translates into?
-	
 	\texttt{\begin{table}
 			\centering
 			\begin{tabular}{l}
@@ -2192,3 +2439,325 @@
 \end{frame}
 
 
+% Lesson 10. Advanced in terms
+\lecture{TADV}{tadv}
+
+
+\section{Overview}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Goals of the lesson
+	\begin{itemize}
+		\item To introduce operators
+		\item To recall term comparison operators
+		\item To discuss term decomposition operations
+	\end{itemize}
+	
+\end{frame}
+
+
+\section{Comparison}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	\begin{tabular}{m{14cm}}
+		Prolog contains an important predicate for comparing terms, namely \texttt{==/2}. It \textbf{does not instantiate} variables, thus it is not the same as the unification predicate \texttt{=/2}.\\ \\
+		\texttt{term1 == term2} is \texttt{true} if and only if \texttt{term1} and \texttt{term2} are identical.
+		\only<5->{\\ \\ It should now be clear that \texttt{==} can be viewed as a \textit{\textbf{stronger}} test for equality between terms than \texttt{=}. That is, if \texttt{t1} and \texttt{t2} are Prolog terms, and the query \texttt{t1 == t2} succeeds, then the query \texttt{t1 = t2} will succeed too.}
+	\end{tabular}
+	
+	\only<2>{\texttt{
+		\begin{table}
+			\centering
+			\begin{tabular}{l l}
+				term == term. & true.\\ \\
+				term1 == term2. & false.\\ \\
+				term == 'term'. & true.
+			\end{tabular}
+		\end{table}
+	}}
+
+	\only<3-4>{\texttt{
+			\begin{table}
+				\centering
+				\begin{tabular}{l l}
+					X == Y. & \uncover<4>{false.}\\ \\
+					X == a. & \uncover<4>{false.}\\ \\
+					X = a, X == a. & \uncover<4>{true.}\\ \\
+					X = Y, X == Y. & \uncover<4>{true.}
+				\end{tabular}
+			\end{table}
+	}}
+
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	A predicate that is reverse of \texttt{==} is \texttt{\textbackslash==}. This predicate id defined so that it succeeds precisely in those case where \texttt{==} fails.
+	
+	\texttt{\begin{table}
+			\centering
+			\begin{tabular}{l l}
+				term \textbackslash== term. & \uncover<2->{false.}\\ \\
+				t1 \textbackslash== t2. & \uncover<2->{true.}\\ \\
+				term \textbackslash== 'term'. & \uncover<2->{false.}\\ \\
+				X \textbackslash== a. & \uncover<2->{true.}\\ \\
+				X \textbackslash== Y. & \uncover<2->{true.}
+			\end{tabular}
+	\end{table}}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Now we have introduced all comparing terms. Here is the summary:
+	
+	\begin{table}
+		\centering
+		\begin{tabular}{l m{10cm}}
+			\rowcolor{LightGray} = & The unification predicate. Succeeds if it can unify its arguments, fails otherwise.\\
+			\rowcolor{LightGray} \textbackslash= & The negation of the unification predicate. Succeeds if = fails, and vice-versa.\\
+			\rowcolor{LightGray} == & The identity predicate. Succeeds if its arguments are identical, fails otherwise.\\
+			\rowcolor{LightGray} \textbackslash== & The negation of the identity predicate. Succeeds if == fails, and vice-versa.\\
+			\rowcolor{LightGray} =:= & The arithmetic equality predicate. Succeeds if its arguments evaluate to the same integer.\\
+			\rowcolor{LightGray} =\textbackslash= & The arithmetic inequality predicate. Succeeds if its arguments evaluate to different integers.
+		\end{tabular}
+	\end{table}
+\end{frame}
+
+
+\section{Term notation}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Some terms may have multiple notations, and, although they look different to us, Prolog regards them as identical. As we recall, \texttt{t} and \texttt{'t'} are identical, that is these are two different notations of the same term, as far as Prolog is concerned.
+	
+	In fact there are many other cases there Prolog treats two strings as being exactly the same term. Most of them are \textit{syntactic sugar} that makes programming more pleasant.
+	
+	It is very handy to be able to write code in the notation we like, and to let Prolog run our code in the notation it finds natural.
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	A good and most obvious example of this are the arithmetic predicates. As we recall, arithmetic operations are terms, having multiple notations.
+	
+	\only<1>{\texttt{\begin{table}
+				\centering
+				\begin{tabular}{l c l}
+					2 + 3 & == & +(2,3).\\
+					2 - 3 & == & -(2,3).\\
+					2 * 3 & == & *(2,3).\\
+					3 * (7 + 5) & == & *(3, +(7,5)).
+				\end{tabular}
+			\end{table}}}
+
+	\only<2->{\texttt{\begin{table}
+				\centering
+				\begin{tabular}{l c l}
+					(2 < 3) & == & <(2, 3).\\
+					(2 =< 3) & == & =<(2, 3).\\
+					(2 =:= 3) & == & =:=(2, 3).\\
+					(2 =\textbackslash= 3) & == & =\textbackslash=(2, 3).\\
+					(2 > 3) & == & >(2, 3).\\
+					(2 >= 3) & == & >=(2, 3).
+				\end{tabular}
+			\end{table}}}
+	
+\end{frame}
+
+
+\section{Examining terms}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	\begin{figure}
+		\includegraphics[scale=0.9]{typetree}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Sometimes it is useful to know of which type a given term is. Prolog provides built-in predicates that test if a given term is of certain type or not.
+	
+	\begin{table}
+		\centering
+		\begin{tabular}{ l l }
+			\rowcolor{LightGray} \texttt{atom/1} & Tests whether the argument is an atom. \\
+			\rowcolor{LightGray} \texttt{integer/1} & Tests whether the argument is an integer. \\
+			\rowcolor{LightGray} \texttt{float/1} & Tests whether the argument is a floating point number. \\
+			\rowcolor{LightGray} \texttt{number/1} & Tests whether the argument is a number, i.e. an integer or a float. \\
+			\rowcolor{LightGray} \texttt{atomic/1} & Tests whether the argument is a constant. \\
+			\rowcolor{LightGray} \texttt{var/1} & Tests whether the argument is an uninstantiated variable. \\
+			\rowcolor{LightGray} \texttt{nonvar/1} & Tests whether the argument is not an  uninstantiated variable.
+		\end{tabular}
+	\end{table}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Suppose we have a complex term of which we don't know what it looks like. What do we want to know about it?
+	
+	Probably, what its functor is, what's the arity and what do arguments look like.
+	
+	Prolog provides built-in predicates that do precisely that.
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	The first two questions are answered by the predicate \texttt{functor/3}. Given a term this predicate will tell us what the functor and the arity are.
+	
+	\texttt{\begin{tabular}{l l}
+			?- functor(f(x, y), F, A). & F = f, A = 2.\\ \\
+			?- functor(f, F, A). & F = f, A = 0.
+	\end{tabular}}
+
+	We can use the predicate \texttt{functor/3} not only to find the structure of a term, but also to \textbf{construct} terms. How? By specifying the second and third arguments and leaving the first uninstantiated.
+	
+	\texttt{\begin{tabular}{l l}
+			?- functor(T, f, 3). & T = f(\_21882, \_21884, \_21886).
+	\end{tabular}}
+	
+	\textbf{Note, that either the first argument or the second and third argument have to be instantiated.}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	The third question about the structure of an unknown complex term is answered by two predicates.
+	
+	The first is \texttt{arg/3} which tells us about arguments of complex term. It takes a number \(N \) and a term \texttt{T} and returns the \(N\)-th argument of \texttt{T} as its last argument. It can be used either to access the value or to instantiate a corresponding argument.
+	
+	\texttt{\begin{tabular}{l l}
+			?- arg(2, f(x, y), Second). & Second = y.\\
+			?- arg(2, f(x, Y), y). & Y = y.\\
+			?- arg(3, f(x, y), Third). & false.
+	\end{tabular}}
+
+	\textbf{Note that enumeration on arguments starts at 1.}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	The second is \texttt{'=..'/2}. It takes a complex term and returns a list containing the functor as first element and then all the arguments. This predicate is called \textbf{univ}.
+	
+	\texttt{\begin{tabular}{l l}
+			?- f(x, y, z) =.. Struct. & Struct = [f, x, y, z].\\
+			?- f(X) =.. F. & F = [f, X].\\
+			?- T =.. [g, x, y, z]. & T = g(x, y, z).
+	\end{tabular}}
+\end{frame}
+
+
+\section{Operators}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Operators are the unary or binary predicates defined as:
+	
+	\begin{enumerate}
+		\item \textit{Infix} operator. They are written between their arguments.
+		\item \textit{Prefix} operator that are written before their argument.
+		\item \textit{Postfix} operator which is written after their argument.
+	\end{enumerate}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Prolog standard predicate notations are not ambiguous. For example we wouldn't be confused on how to interpret the expression \texttt{is(11, +(2, *(3,3)))}, because it is pretty obvious in which order operations should be performed.
+	
+	Other notations, however, could be more ambiguous. For example Prolog knows about conventions for disambiguating arithmetic expressions. When we write \texttt{2 + 3 * 3}, Prolog knows that it is \texttt{2 + (3 * 3)} we meant, not \texttt{(2 + 3) * 3}.
+	
+	Such conventions are implemented with operator \textit{precedence}. Every operator has a certain precedence. The precedence of \texttt{+} is greater that the precedence of \texttt{*}, for instance. In the expression \texttt{2 + 3 * 3} operator \texttt{+} has the highest precedence, so it is taken to be the main functor of the expression: \texttt{+(2, *(3,3))}.
+	
+	The precedence of \texttt{is/2} is higher than the precedence of any arithmetic operator, so that \texttt{11 is 2 + 3 * 3} is interpreted as \texttt{is(11, +(2, *(3, 3))))}.
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	OK, that is what about precedence. Let us look to the following query, though.
+	
+	\texttt{?- 6 is 1 + 2 + 3.}
+	
+	Prolog correctly answers \texttt{true}. But how Prolog parenthesizes the internal representation: \texttt{is(6, +(1, +(2, 3)))} or \texttt{is(6, +(+(1, 2), 3))}?
+	
+	Prolog uses information about the \textbf{associativity} of operations to disambiguate the expressions.
+	
+	For example, \texttt{+} is \textit{left associative}. That means the expression to the right of + must have a lower precedence that + itself, whereas the expression to the left may have the same precedence as +.
+	
+	Some operators might be defined to be non-associative which means that both of their arguments must have a lower precedence.
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	The type of an operator (infix, prefix, or postfix), its precedence, and its associativity are the three things that Prolog needs to know to be able to translate the user friendly, but potentially ambiguous operator notation into Prolog’s internal representation.
+
+	New operator definitions in Prolog look like:	
+	\texttt{\begin{table}
+			\centering
+			\begin{tabular}{c}
+				:- op(Precedence, Type, Name).
+			\end{tabular}
+	\end{table}}
+
+
+	\begin{tabular}{m{9cm} c}
+		\uncover<2->{Precedence is a number between 0 and 1200.} \uncover<3->{
+			Type is an atom specifying the type and associativity of the operator: f represents the operator while x and y represent its arguments, x stands for 
+		an argument which must have a precedence lower than the precedence of f, and y stands for an argument which could have the precedence lower or equal to the 
+	precedence of f.} & \uncover<3->{{\texttt{
+			\begin{tabular}{l l}
+				\rowcolor{LightGray} infix & xfx, xfy, yfx \\
+				\rowcolor{LightGray} prefix & fx, fy \\
+				\rowcolor{LightGray} postfix & xf, yf \\
+			\end{tabular}}}}
+	\end{tabular}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\insertsection}
+	
+	Here are the definitions for some of the built-in operators. You can see that operators with the same properties can be specified in one statement by giving a list of their names instead of a single name as third argument of op.
+	\texttt{\begin{table}
+			\centering
+			\begin{tabular}{ l }
+				\rowcolor{LightGray} :- op(1200, xfx, [:-, -\textgreater]). \\
+				\rowcolor{LightGray} :- op(1200, fx, [:-, ?- ]). \\
+				\rowcolor{LightGray} :- op(1200, xfy, [;]). \\
+				\rowcolor{LightGray} :- op(1000, xfy, [',']). \\
+				\rowcolor{LightGray} :- op(700, xfx, [=, is, =.., ==, \textbackslash==, =:=, =\textbackslash=, <, >, =<, >=]). \\
+				\rowcolor{LightGray} :- op(500, yfx, [+, -]). \\
+				\rowcolor{LightGray} :- op(500, fx, [+, -]). \\
+				\rowcolor{LightGray} :- op(300, xfx, [mod]). \\
+				\rowcolor{LightGray} :- op(200, xfy, [\textasciicircum]). \\
+			\end{tabular}
+	\end{table}}
+	
+\end{frame}
