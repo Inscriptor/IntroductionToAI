@@ -15,13 +15,11 @@
 		\item You can download SWI-Prolog at this page: \href{https://www.swi-prolog.org/download/stable}{https://www.swi-prolog.org/download/stable}
 		\item Complete manual is available at \href{https://www.swi-prolog.org/pldoc/doc_for?object=manual}{https://www.swi-prolog.org/pldoc/doc\_for?object=manual}
 		\item Online tool SWISH: \href{https://swish.swi-prolog.org/}{https://swish.swi-prolog.org/}
-		\item \textcolor{gray}{Eclipse PDT~--- Prolog Development Tool:} \href{https://sewiki.iai.uni-bonn.de/research/pdt/docs/start}{https://sewiki.iai.uni-bonn.de/research/pdt/docs/start}
+		\item Eclipse PDT~--- Prolog Development Tool: \href{https://sewiki.iai.uni-bonn.de/research/pdt/docs/start}{https://sewiki.iai.uni-bonn.de/research/pdt/docs/start}
 		\item Slides will be published weekly in the Google Classroom and on github: \href{https://github.com/Inscriptor/IntroductionToAI}{https://github.com/Inscriptor/IntroductionToAI}
 	\end{itemize}
 \end{frame}
 
-
-\section{Work and grading policy}
 
 \begin{frame}
 	\frametitle{\insertsection}
@@ -38,7 +36,7 @@
 		\item Tests: 5\%
 		\item Late day policy
 		\begin{itemize}
-			\item 7 free late days; afterwards 10\% off per day late
+			\item 14 free late days; afterwards 10\% off per day late
 			\item Assigments not accepted after 1 week late per assignment
 		\end{itemize}
 	\end{itemize}
@@ -66,22 +64,24 @@
 \begin{frame}
 	\frametitle{\insertsection}
 	
-	\begin{block}{}
-		\begin{columns}	
-			\column{60mm}
-				\begin{itemize}
-					\item \textbf{Facts}. Facts are used to state things that are unconditionally true in the domain of interest.
-					\item \textbf{Rules}. Rules state information that is conditionally true of the domain of interest.
-				\end{itemize}
-			\column{70mm}
-				\textbf{Knowledge Base} (aka database) is a collection of facts and rules. Prolog programs are knowledge
-				bases, collections of facts and rules which describe some collection of relationships that we find interesting. We use knowledge base
-				by posing queries.
-		\end{columns}
-	\end{block}
-
-	\textbf{Queries}. The Prolog interpreter responds to queries about the facts and rules represented in its database. In making a query you are asking Prolog whether it can prove that your query is true. If so, it answers \textit{True} and displays any \textit{variable bindings} that it made in coming up with the answer. If it fails to prove the query true, it answers \textit{False}.
+	Basic Prolog constructs
+	\begin{tabular}{p{0.4\textwidth}p{.6\textwidth}}
+		\begin{itemize}
+			\item \textbf{Facts}. Facts are used to state things that are unconditionally true in the domain of interest.
+			\item \textbf{Rules}. Rules state information that is conditionally true of the domain of interest.
+		\end{itemize}
+		&
+		\begin{itemize}
+			\item[] \textbf{Knowledge Base} (also called database) is a collection of facts and rules. Prolog programs are knowledge
+			bases, collections of facts and rules which describe some collection of relationships that we find interesting. We use knowledge base
+			by posing queries.
+		\end{itemize} \\
+		\multicolumn{2}{p{\textwidth}}{
+				\textbf{Queries}. The Prolog interpreter responds to queries about the facts and rules represented in its database. In making a query you are asking Prolog whether it can prove that your query is true. If so, it answers "Yes" and displays any \textit{variable bindings} that it made in coming up with the answer. If it fails to prove the query true, it answers "No".
+		}
+	\end{tabular}
 	
+
 \end{frame}
 
 \section{Simple Examples}
@@ -90,117 +90,107 @@
 	\frametitle{\insertsection}
 	\textbf{Example 1}: Simple knowledge base
 	
-	\begin{block}{}
-		\begin{columns}[onlytextwidth,t]
-			\column{0.4\textwidth}
-			\centering
-			\textbf{Knowledge base}
-			
+	\begin{tabular}{p{0.4\textwidth}|l}
+			\textbf{Knowledge base} & \only<2->{\textbf{Possible queries and responses}} \\
+			\hline
+			\hline
 			\texttt{
-				\begin{itemize}
-					\item[] kind(fruit, orange).
-					\item[] kind(fruit, apple).
-					\item[] kind(veg, tomato).
-					\item[] kind(veg, onion).
-					\item<3->[] color(red, apple).
-					\item<3->[] color(red, tomato).
-					\item<3->[] color(red, onion).
-					\item<3->[] color(orng, orange)
-				\end{itemize}
-			}
-			\column{0.55\textwidth}
-			\centering
-			\textbf{Queries}
-			
-			\texttt{
-				\begin{itemize}
-					\item<2->[] ?- kind(fruit, apple). \textbf{true.}
-					\item<2->[] ?- kind(veg, apple). \textbf{false.}
-					\item<2->[] ?- pred(veg, onion). \textbf{ERROR}
-					\item<4->[] ?- color(red, F). \textbf{F = apple; F = tomato; F = onion.}
-					\item<4->[] ?- kind(fruit, F), color(red, F). \textbf{F = apple.}
-				\end{itemize}
-			}
-		\end{columns}
-	\end{block}
-	
+				\begin{tabular}{p{0.5\textwidth}}
+					fruit(orange).\\
+					fruit(apple).\\
+					vegetable(potato).\\
+					vegetable(onion).\\
+					\only<3->{common(you).\\
+						uncommon(chuck\_norris).\\
+						makes\_cry(onion, Person) :- common(Person).\\
+						makes\_cry(Person, onion) :- uncommon(Person).\\
+					}
+				\end{tabular}
+			} &
+			\texttt{\only<2>{\begin{tabular}{l l}
+				?- fruit(orange). & \textbf{true.} \\
+				\hline
+				?- fruit(onion). & \textbf{false.} \\
+				\hline
+				?- fruit(tomato). & \textbf{false.} \\
+				\hline
+				?- berry(watermelon). & \textbf{ERROR}
+			\end{tabular}} \only<4->{\begin{tabular}{p{0.3\textwidth}p{0.2\textwidth}}
+				?- makes\_cry(chuck\_norris, onion). & \textbf{true.} \\
+				\hline
+				?- makes\_cry(onion, you). & \textbf{true.} \\
+				\hline
+				?- makes\_cry(you, onion). & \textbf{false.} \\
+				\hline
+				?- makes\_cry(Who, Whom). & Who=you, \newline  Whom=onion; \newline  Who=chuck\_norris, \newline  Whom=onion. \\
+		\end{tabular}}}
+	\end{tabular}
 \end{frame}
 
 \begin{frame}
 	\frametitle{\insertsection}
 	\textbf{Example 2}: Conjunctions and disjunctions in rules
 	
-	\begin{block}{}
-		\begin{columns}[onlytextwidth,t]
-			\column{0.55\textwidth}
-			\centering
-			\textbf{Knowledge base}
-			
-			\texttt{
-				\begin{itemize}
-					\item[] lovesMusic(anna).
-					\item[]	lovesMusic(sam).
-					\item[] playsInstrument(anna).
-					\item[] musician(P) :- lovesMusic(P), playsInstrument(P).
-					\item[] melomaniac(P) :- !,lovesMusic(P); playsInstrument(P).
-				\end{itemize}
-			}
-			\column{0.4\textwidth}
-			\centering
-			\textbf{Queries}
-			
-			\texttt{
-				\begin{itemize}
-					\item<2->[] ?- musician(anna). \textbf{true.}
-					\item<2->[] ?- musician(sam). \textbf{false.}
-					\item<2->[] ?- melomaniac(anna). \textbf{true.}
-					\item<2->[] ?- melomaniac(sam). \textbf{true.}
-					\item<2->[] ?- melomaniac(Person). \textbf{Person=sam; Person=anna.}
-				\end{itemize}
-			}
-		\end{columns}
-	\end{block}
-	
+	\begin{tabular}{p{0.5\textwidth}|l}
+		\textbf{Knowledge base} & \only<2->{\textbf{Possible queries and responses}} \\
+		\hline
+		\hline
+		\texttt{
+			\begin{tabular}{p{0.5\textwidth}}
+				lovesMusic(anna).\\
+				lovesMusic(sam).\\
+				playsInstrument(anna).\\
+				musician(P) :- lovesMusic(P),\newline playsInstrument(P).\\
+				melomaniac(P) :- !,lovesMusic(P);\newline playsInstrument(P).\\
+			\end{tabular}
+		} &
+		\texttt{\only<2->{\begin{tabular}{p{0.3\textwidth}p{0.2\textwidth}}
+					?- musician(anna) & \textbf{true.} \\
+					\hline
+					?- musician(sam) & \textbf{false.} \\
+					\hline
+					?- melomaniac(anna) & \textbf{true.} \\
+					\hline
+					?- melomaniac(sam) & \textbf{true.} \\
+					\hline
+					?- melomaniac(Person) & \textbf{Person=sam; Person=anna.}
+			\end{tabular}}}
+	\end{tabular}
 \end{frame}
 
 \begin{frame}
 	\frametitle{\insertsection}
 	\textbf{Example 3}: Negations
-%	\begin{block}{}
-		\begin{columns}[onlytextwidth,t]
-			\column{0.6\textwidth}
-			\centering
-			\textbf{Knowledge base}
-			\texttt{
-				\begin{itemize}
-					\item[] cat(fluffy).
-					\item[] cat(cornie).
-					\item[] bird(butch).
-					\item[] dog(bayley).
-					\item[] good(fluffy).
-					\item[] hasClaws(X) :- cat(X).
-					\item[] hasClaws(X) :- bird(X).
-					\item[] hasClaws(X) :- not(dog(X)).
-					\item[] animal(X) :- cat(X);bird(X);dog(X).
-					\item[] domestic(X) :- animal(X),not(hasClaws(X)).
-					\item[] domestic(X) :- animal(X),good(X).
-				\end{itemize}
-			}
-			\column{0.43\textwidth}
-			\centering
-			\textbf{Queries}
-			
-			\texttt{
-				\begin{itemize}
-					\item<2->[] ?- domestic(bayley). \textbf{true.}
-					\item<2->[] ?- domestic(cornie). \textbf{false.}
-					\item<2->[] ?- cat(C),domestic(C) \textbf{C~=~fluffy.}
-					\item<2->[] ?- cat(C),not(domestic(C)) \textbf{C~=~cornie.}
-				\end{itemize}
-			}
-		\end{columns}
-%	\end{block}
 	
+	\begin{tabular}{p{0.5\textwidth}|l}
+		\textbf{Knowledge base} & \only<2->{\textbf{Possible queries and responses}} \\
+		\hline
+		\hline
+		\texttt{
+			\begin{tabular}{p{0.5\textwidth}}
+				cat(fluffy).\\
+				cat(cornie).\\
+				bird(butch).\\
+				dog(bayley).\\
+				good(fluffy).\\
+				hasClaws(X) :- cat(X).\\
+				hasClaws(X) :- bird(X).\\
+				hasClaws(X) :- not(dog(X)).\\
+				animal(X) :- cat(X);bird(X);dog(X).\\
+				domestic(X) :- animal(X),not(hasClaws(X)).\\
+				domestic(X) :- animal(X),good(X).\\
+			\end{tabular}
+		} &
+		\texttt{\only<2->{\begin{tabular}{p{0.3\textwidth}p{0.2\textwidth}}
+					?- domestic(bayley). & \textbf{true.} \\
+					\hline
+					?- domestic(cornie). & \textbf{false.} \\
+					\hline
+					?- cat(C),domestic(C) & \textbf{C = fluffy.}\\
+					\hline
+					?- cat(C),not(domestic(C)) & \textbf{C = cornie.}
+		\end{tabular}}}
+	\end{tabular}
 \end{frame}
 
 \section{Prolog Syntax}
@@ -405,13 +395,13 @@
 	
 	\texttt{
 		\begin{tabular}{p{0.8\textwidth} | l}
-			someString = someString. & \textbf{true.} \\
+			chuckNorris = chuckNorris. & \textbf{true.} \\
 			\hline
 			100 = 100. & \textbf{true.} \\
 			\hline
-			someString = "someString". & \textbf{false.} \\
+			chuckNorris = "chuckNorris". & \textbf{false.} \\
 			\hline
-			someString = 'someString'. & \textbf{true.} \\
+			chuckNorris = 'chuckNorris'. & \textbf{true.} \\
 			\hline
 			100 = '100' & \textbf{false.} \\
 			\hline
@@ -653,18 +643,20 @@
 	
 	\only<1>{Recall our family program which as we know works just fine:}
 	\only<2->{But what happens if we swap goals in the second rule?}
+	
 	\texttt{
-		\begin{itemize}
-			\item[] ancestor(Anc,Dec) :- child(Dec,Anc).
-			\item<1>[] ancestor(Anc,Dec) :- child(Dec,Par), ancestor(Anc,Par).
-			\item<2->[] \underline{ancestor(Anc,Dec) :- ancestor(Anc,Par), child(Dec,Par).}
-			\item[] child(jane, peter).
-			\item[] child(mary, kate).
-			\item[] child(sam, mary).
-			\item[] child(jason, jane).
-			\item[] child(ann, jason).
-		\end{itemize}
+		\begin{tabular}{l}
+			ancestor(Anc,Dec) :- child(Dec,Anc). \\
+			\only<1>{ancestor(Anc,Dec) :- child(Dec,Par), ancestor(Anc,Par).}
+			\only<2->{\underline{ancestor(Anc,Dec) :- ancestor(Anc,Par), child(Dec,Par).}}\\
+			child(jane, peter). \\
+			child(mary, kate). \\
+			child(sam, mary). \\
+			child(jason, jane). \\
+			child(ann, jason).
+		\end{tabular}
 	}
+
 	\uncover<2->{If we pose query \texttt{ancestor(jane, ann)} we will get a correct answer (\texttt{true}), and then an error message which means that Prolog is looping. }
 
 \end{frame}
