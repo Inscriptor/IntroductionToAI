@@ -1642,7 +1642,7 @@
 			readFile :- & open('in.txt',read,In),\\
 			~ & \textbackslash+ at\_end\_of\_stream(In),\\
 			~ & read(In,R),\\
-			~ & writeln(In, R),\\
+			~ & writeln(R),\\
 			~ & close(In).\\
 			writeFile :- & open('../out.txt',write,Out),\\
 			~ & write(Out, 'Some string.'),\\
