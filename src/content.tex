@@ -4,7 +4,71 @@
 % Lesson 1. Introduction, main terms and simple examples
 \lecture{Intro}{intro}
 
-\section{Course work and grading policy}
+\section{Whats and Whys}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\begin{figure}
+		\includegraphics[scale=0.7]{ai}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\begin{figure}
+		\centering
+		\begin{subfigure}{.5\textwidth}
+			\centering
+			%\includegraphics[width=.4\linewidth]{ai-tech}
+			\includegraphics[scale=.43]{ai-tech}
+		\end{subfigure}%
+		\begin{subfigure}{.5\textwidth}
+			\centering
+			\includegraphics[scale=.43]{ai-exmp}
+		\end{subfigure}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\justifying
+	\textbf{Logic programming} is a variation of declarative programming based on a type of formal logic called \textit{Predicate Calculus}. The precise algorithms and processing methods are left up to the language, which is expected to generate the proper outcome.
+	
+	Logic programming should not be confused with programming logic, which is a more general study of how logical rules apply in computer programming.
+	
+	Logic programs are completely data-driven and do not typically include any connective logic. Instead, the programs use a set of logical statements, which are also called \textit{predicates}.
+\end{frame}
+
+\subsection{Benefits}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	\justifying
+	\begin{enumerate}
+		\item Logic programming allows for the concise representation of knowledge and the efficient execution of inference. It has been used in a wide range of AI applications, including natural language processing, planning, knowledge representation and reasoning.
+		\item Logic are declarative, meaning that they specify what is to be done, rather than how it is to be done. This makes them easier to understand and maintain than procedural programs.
+		\item Logic programs can be executed efficiently by computers.
+		\item Logic programs can be easily extended and modified.
+		\item Logic programming is a well-understood paradigm with a rich theoretical foundation. This foundation can be used to develop new AI applications and to understand and improve existing ones.
+		\item Logic programming is well suited for use in distributed systems, such as the World Wide Web.
+	\end{enumerate}
+\end{frame}
+
+\subsection{Challenges}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	\justifying
+	\begin{enumerate}
+		\item Logic programming is a type of AI that is based on formal logic. This means that it is based on a set of rules that are used to infer new information. It is a very powerful tool for AI, but it also has some limitations.
+		\item One of the biggest challenges with logic programming is that it can be very difficult to scale. This is because the number of rules that need to be considered grows exponentially as the size of the problem increases. This can make it very difficult to solve very large problems.
+		\item It can be difficult to deal with uncertain information. This is because the rules that are used to infer new information are based on a set of assumptions that may not be true in all cases. This can lead to incorrect results if the assumptions are not valid.
+		\item These challenges can be overcome with careful planning and design, but they need to be kept in mind when using logic programming for AI.
+	\end{enumerate}
+\end{frame}
+
 
 \section{Tools and resources}
 
@@ -32,10 +96,9 @@
 		\begin{tabular}{ll}
 			\textbf{Participation:} & 10\% \\
 			\textbf{Exercises:} & 10\% \\
-			\textbf{Assignments} & 5 assignments: 8\% + 10\% + 12\% + 20\% + 25\% = 75\% \\
-			\textbf{Extra homeworks:} & 5\% each \\
+			\textbf{Assignments} & 5 assignments: 8\% + 10\% + 12\% + 30\% + 15\% = 75\% \\
+			\textbf{Extra homeworks:} & 3~--~6\% each \\
 			\textbf{Class work:} & 0.2\% for + \\
-			\textbf{Exam:} & 40\% max
 		\end{tabular}
 	\egroup
 \end{frame}
@@ -48,6 +111,16 @@
 		\item assignments not accepted after 1 week late per assignment
 		\item homeworks are only accepted in classes next to those they were set in
 	\end{itemize}
+\end{frame}
+
+\subsection{Score decision}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+	\begin{figure}
+		\includegraphics[scale=0.5]{score-tree}
+	\end{figure}
 \end{frame}
 
 
@@ -218,7 +291,7 @@
 		\item Numbers
 		\item Strings
 		\item Variables
-		\item Compex terms~--- structures
+		\item Compound terms~--- structures
 	\end{itemize}
 \end{frame}
 
@@ -271,13 +344,13 @@
 
 \begin{frame}
 	\frametitle{\insertsection}
-	\textbf{Complex terms}
+	\textbf{Compound terms}
 	\only<1>{\begin{itemize}
-		\item Complex terms are built out of \textbf{functor (predicate)} followed by a sequence of \textbf{arguments}.
+		\item Compound terms are built out of \textbf{functor (predicate)} followed by a sequence of \textbf{arguments}.
 		\item The arguments are put in parentheses and are separated by commas.
 		\item The functor of a term \textbf{must} be an atom.
 		\item Arguments can be any kind of term.
-		\item The number of arguments that a complex term has is called its \textbf{arity}.
+		\item The number of arguments that a compound term has is called its \textbf{arity}.
 	\end{itemize}}
 	\only<2->{\begin{itemize}
 			\item Any \textbf{constant} is a term. Constants are atoms, numbers or strings.
@@ -394,7 +467,7 @@
 	\begin{enumerate}
 		\item If \texttt{term1} and \texttt{term2} are constants, then \texttt{term1} and \texttt{term2} match if and only if they are the same atom, the same string or the same number.
 		\item If \texttt{term1} is a variable and \texttt{term2} is any type of term, then \texttt{term1} and \texttt{term2} match, and \texttt{term1} is instantiated to \texttt{term2}. Vice versa is also true. If they are both variables, they’re both instantiated to each other, and we say that they \textbf{share values}.
-		\item If \texttt{term1} and \texttt{term2} are complex terms, then they match if and only if:
+		\item If \texttt{term1} and \texttt{term2} are compound terms, then they match if and only if:
 		\begin{enumerate}
 			\item They have the same functor and arity.
 			\item All their corresponding arguments match.
@@ -2623,7 +2696,7 @@
 \begin{frame}
 	\frametitle{\insertsection}
 	
-	Suppose we have a complex term of which we don't know what it looks like. What do we want to know about it?
+	Suppose we have a compound term of which we don't know what it looks like. What do we want to know about it?
 	
 	Probably, what its functor is, what's the arity and what do arguments look like.
 	
@@ -2654,9 +2727,9 @@
 \begin{frame}
 	\frametitle{\insertsection}
 	
-	The third question about the structure of an unknown complex term is answered by two predicates.
+	The third question about the structure of an unknown compound term is answered by two predicates.
 	
-	The first is \texttt{arg/3} which tells us about arguments of complex term. It takes a number \(N \) and a term \texttt{T} and returns the \(N\)-th argument of \texttt{T} as its last argument. It can be used either to access the value or to instantiate a corresponding argument.
+	The first is \texttt{arg/3} which tells us about arguments of compound term. It takes a number \(N \) and a term \texttt{T} and returns the \(N\)-th argument of \texttt{T} as its last argument. It can be used either to access the value or to instantiate a corresponding argument.
 	
 	\texttt{\begin{tabular}{l l}
 			?- arg(2, f(x, y), Second). & Second = y.\\
@@ -2671,7 +2744,7 @@
 \begin{frame}
 	\frametitle{\insertsection}
 	
-	The second is \texttt{'=..'/2}. It takes a complex term and returns a list containing the functor as first element and then all the arguments. This predicate is called \textbf{univ}.
+	The second is \texttt{'=..'/2}. It takes a compound term and returns a list containing the functor as first element and then all the arguments. This predicate is called \textbf{univ}.
 	
 	\texttt{\begin{tabular}{l l}
 			?- f(x, y, z) =.. Struct. & Struct = [f, x, y, z].\\
